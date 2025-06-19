@@ -79,10 +79,6 @@ const MethodologySection = () => {
                   <span className="text-morocco-500 mr-2">•</span>
                   <span className="text-sage-700">Apprentissage d'<em>al-Jazariyya</em></span>
                 </li>
-                <li className="flex items-start">
-                  <span className="text-morocco-500 mr-2">•</span>
-                  <span className="text-sage-700">Textes fondamentaux du tajwīd</span>
-                </li>
               </ul>
             </div>
             <div>
