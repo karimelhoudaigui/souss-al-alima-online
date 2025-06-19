@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,7 +19,36 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'amiri': ['Amiri', 'serif'],
+				'inter': ['Inter', 'sans-serif'],
+			},
 			colors: {
+				// Traditional Moroccan colors
+				'morocco': {
+					50: '#fdf8f0',
+					100: '#fbecd7',
+					200: '#f6d4af',
+					300: '#efb57c',
+					400: '#e89047',
+					500: '#d97706',
+					600: '#c2610c',
+					700: '#a1470c',
+					800: '#843912',
+					900: '#6d2f12',
+				},
+				'sage': {
+					50: '#f6f7f4',
+					100: '#e9ebe5',
+					200: '#d4d8cc',
+					300: '#b6bfa8',
+					400: '#949f7f',
+					500: '#788362',
+					600: '#5d674d',
+					700: '#4a523f',
+					800: '#3d4235',
+					900: '#35392f',
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -84,11 +114,22 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.6s ease-out'
 			}
 		}
 	},
