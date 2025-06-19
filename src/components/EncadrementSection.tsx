@@ -16,8 +16,12 @@ const EncadrementSection = () => {
           <Card className="bg-white border-morocco-200 shadow-xl">
             <CardContent className="p-12">
               <div className="text-center mb-8">
-                <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-morocco-100 to-sage-100 rounded-full flex items-center justify-center">
-                  <div className="font-amiri text-4xl text-morocco-600">ح.ج</div>
+                <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden shadow-lg">
+                  <img 
+                    src="/lovable-uploads/52f4854d-35b0-4f5f-a86a-0c41daedb49d.png" 
+                    alt="Hussein Jbara" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h3 className="text-3xl font-bold text-morocco-800 mb-2">
                   Hussein Jbara
