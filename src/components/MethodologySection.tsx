@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, BookOpen, FileText, School } from "lucide-react";
 
@@ -40,6 +41,23 @@ const MethodologySection = () => {
           <p className="text-xl text-sage-700 max-w-3xl mx-auto">
             Nous reprenons la méthode traditionnelle avec la <strong className="text-morocco-700">lūḥa</strong> (tablette), adaptée pour l'enseignement en ligne
           </p>
+        </div>
+        
+        {/* Image illustrative de la méthode traditionnelle */}
+        <div className="mb-16">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-4xl mx-auto">
+            <img 
+              src="/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd.png"
+              alt="Enseignement traditionnel avec la lūḥa (tablette) - Méthode ancestrale d'apprentissage du Coran"
+              className="w-full h-auto object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+            <div className="absolute bottom-4 left-4 right-4 text-white">
+              <p className="text-lg font-medium text-center bg-black/40 backdrop-blur-sm rounded-lg p-3">
+                L'enseignement traditionnel avec la lūḥa, adapté pour l'ère numérique
+              </p>
+            </div>
+          </div>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
