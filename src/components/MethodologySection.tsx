@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, BookOpen, FileText, School } from "lucide-react";
 
@@ -19,7 +18,7 @@ const MethodologySection = () => {
     {
       icon: FileText,
       title: "Écriture coranique",
-      description: "Maîtrise du Rasm wa Dabt conforme au muṣḥaf marocain",
+      description: "Maîtrise du Rasm wa Dabt conforme au muṣḥaf",
       color: "morocco"
     },
     {
