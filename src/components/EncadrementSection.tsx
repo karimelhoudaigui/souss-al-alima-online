@@ -14,7 +14,8 @@ const EncadrementSection = () => {
           <div className="w-24 h-1 bg-sage-600 mx-auto mb-8"></div>
         </div>
         
-        <div className="max-w-4xl mx-auto">
+        {/* Section Hussein Jbara */}
+        <div className="max-w-4xl mx-auto mb-20">
           <Card className="bg-white border-morocco-200 shadow-xl">
             <CardContent className="p-12">
               <div className="text-center mb-8">
@@ -215,6 +216,112 @@ const EncadrementSection = () => {
                   </Card>
                 </TabsContent>
               </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Section Sidi Mohammed Nît 'Abd Allah al-Tāfrawtī al-Sūsī */}
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-white border-sage-200 shadow-xl">
+            <CardContent className="p-12">
+              <div className="text-center mb-8">
+                <div className="w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden shadow-lg border-4 border-sage-200">
+                  <img 
+                    src="/lovable-uploads/3a077fe5-1c67-4d03-b9cd-3c07ecc5027d.png" 
+                    alt="Sidi Mohammed Nît 'Abd Allah al-Tāfrawtī al-Sūsī" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-3xl font-bold text-sage-800 mb-2">
+                  Sidi Mohammed Nît 'Abd Allah al-Tāfrawtī al-Sūsī
+                </h3>
+                <p className="text-xl text-morocco-600 mb-4">
+                  al-ʿAllāma - Le Grand Savant
+                </p>
+                <p className="text-lg text-sage-600 mb-6">
+                  De la région de Tāfrawt, dans le Souss (Maroc)
+                </p>
+              </div>
+              
+              <div className="space-y-8">
+                <div className="text-center p-6 bg-gradient-to-r from-sage-50 to-morocco-50 rounded-lg">
+                  <p className="text-lg text-sage-700 leading-relaxed mb-4">
+                    Érudit reconnu et maître spirituel, Sidi Mohammed al-Tāfrawtī a voué sa vie à l'enseignement 
+                    des sciences religieuses, formant ses élèves à la fois dans le savoir et dans les bonnes manières. 
+                    Il est reconnu pour sa rigueur et sa profondeur dans les sciences du langage et du droit islamique.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <Card className="bg-sage-50 border-sage-200">
+                    <CardContent className="p-6">
+                      <h4 className="text-xl font-semibold text-morocco-700 mb-4 flex items-center">
+                        <BookOpen className="h-5 w-5 mr-2" />
+                        Domaines d'expertise
+                      </h4>
+                      <ul className="space-y-3 text-sage-700">
+                        <li className="flex items-start">
+                          <span className="text-morocco-500 mr-2 mt-1">•</span>
+                          <span><strong>Langue arabe</strong> - Maîtrise approfondie de la linguistique arabe</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-morocco-500 mr-2 mt-1">•</span>
+                          <span><strong>Fiqh</strong> - Jurisprudence islamique traditionnelle</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-morocco-500 mr-2 mt-1">•</span>
+                          <span><strong>Naḥw</strong> - Grammaire arabe classique</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-morocco-500 mr-2 mt-1">•</span>
+                          <span><strong>Uṣūl al-fiqh</strong> - Fondements du droit islamique</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-morocco-500 mr-2 mt-1">•</span>
+                          <span><strong>Manṭiq</strong> - Logique islamique</span>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-morocco-50 border-morocco-200">
+                    <CardContent className="p-6">
+                      <h4 className="text-xl font-semibold text-sage-700 mb-4 flex items-center">
+                        <GraduationCap className="h-5 w-5 mr-2" />
+                        Contribution pédagogique
+                      </h4>
+                      <div className="space-y-4 text-sage-700">
+                        <p>
+                          Formation complète de générations d'étudiants dans les sciences islamiques traditionnelles
+                        </p>
+                        <p>
+                          Transmission authentique du savoir selon la méthode des grands maîtres du Souss
+                        </p>
+                        <p>
+                          Éducation holistique alliant sciences religieuses et formation du caractère
+                        </p>
+                        <p>
+                          Préservation et perpétuation de la tradition savante marocaine
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="mt-8 p-6 bg-gradient-to-r from-sage-100 to-morocco-100 rounded-lg border border-sage-200">
+                  <div className="text-center">
+                    <p className="text-lg font-medium text-sage-800 mb-2">
+                      Héritage spirituel et intellectuel
+                    </p>
+                    <p className="text-sage-700 leading-relaxed">
+                      Son influence perdure à travers ses nombreux disciples qui continuent de transmettre 
+                      son enseignement rigoureux et sa méthode pédagogique éprouvée dans tout le Maroc. 
+                      Il incarne la continuité de la tradition savante du Souss et la richesse du patrimoine 
+                      intellectuel marocain.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
