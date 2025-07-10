@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Book, BookOpen, FileText, School } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Book, BookOpen, FileText, School, Clock, MapPin, User } from "lucide-react";
 
 const MethodologySection = () => {
   const methodFeatures = [
@@ -80,43 +81,113 @@ const MethodologySection = () => {
           ))}
         </div>
         
-        <div className="bg-white rounded-2xl p-8 shadow-lg">
-          <h3 className="text-2xl font-bold text-morocco-800 mb-6 text-center">
-            Enseignement théorique et pratique
-          </h3>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h4 className="text-xl font-semibold text-morocco-700 mb-4">Théorique</h4>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <span className="text-morocco-500 mr-2">•</span>
-                  <span className="text-sage-700">Étude de <em>Tuhfat al-Aṭfāl</em></span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-morocco-500 mr-2">•</span>
-                  <span className="text-sage-700">Apprentissage d'<em>al-Jazariyya</em></span>
-                </li>
-              </ul>
+        {/* Onglets pour les formations */}
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="general">Formation Générale</TabsTrigger>
+            <TabsTrigger value="supervision">Cours avec Supervision</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="general">
+            <div className="bg-white rounded-2xl p-8 shadow-lg">
+              <h3 className="text-2xl font-bold text-morocco-800 mb-6 text-center">
+                Enseignement théorique et pratique
+              </h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-xl font-semibold text-morocco-700 mb-4">Théorique</h4>
+                  <ul className="space-y-3">
+                    <li className="flex items-start">
+                      <span className="text-morocco-500 mr-2">•</span>
+                      <span className="text-sage-700">Étude de <em>Tuhfat al-Aṭfāl</em></span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-morocco-500 mr-2">•</span>
+                      <span className="text-sage-700">Apprentissage d'<em>al-Jazariyya</em></span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-sage-700 mb-4">Pratique</h4>
+                  <ul className="space-y-3">
+                    <li className="flex items-start">
+                      <span className="text-sage-500 mr-2">•</span>
+                      <span className="text-sage-700">Suivi personnalisé en mémorisation</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-sage-500 mr-2">•</span>
+                      <span className="text-sage-700">Application concrète du tajwīd</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-sage-500 mr-2">•</span>
+                      <span className="text-sage-700">Maîtrise de l'écriture coranique</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xl font-semibold text-sage-700 mb-4">Pratique</h4>
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <span className="text-sage-500 mr-2">•</span>
-                  <span className="text-sage-700">Suivi personnalisé en mémorisation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-sage-500 mr-2">•</span>
-                  <span className="text-sage-700">Application concrète du tajwīd</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-sage-500 mr-2">•</span>
-                  <span className="text-sage-700">Maîtrise de l'écriture coranique</span>
-                </li>
-              </ul>
+          </TabsContent>
+          
+          <TabsContent value="supervision">
+            <div className="bg-white rounded-2xl p-8 shadow-lg">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <h3 className="text-2xl font-bold text-morocco-800 mb-6">
+                    Formation sous supervision
+                  </h3>
+                  
+                  <div className="mb-6">
+                    <p className="text-lg text-sage-700 mb-4">
+                      L'Institut Souss Al-'Ālima propose des cours théoriques et pratiques en{" "}
+                      <span className="font-amiri text-xl text-morocco-600">رواية ورش من طريق يوسف الأرزاق</span>, 
+                      conformément à la tradition des écoles marocaines.
+                    </p>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <h4 className="text-lg font-semibold text-morocco-700 mb-3 flex items-center">
+                      <User className="h-5 w-5 mr-2" />
+                      Sous la supervision de :
+                    </h4>
+                    <div className="bg-morocco-50 p-4 rounded-lg">
+                      <p className="font-bold text-morocco-800">Pr. Ahmed Benmhan</p>
+                      <p className="text-sage-700 text-sm">
+                        Professeur de تجويد et producteur de programmes à la Radio Mohammed VI du Saint Coran
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sage-700">
+                      <Clock className="h-5 w-5 text-morocco-600 mr-3" />
+                      <span>Chaque jeudi à 21h00 (heure du Maroc)</span>
+                    </div>
+                    <div className="flex items-center text-sage-700">
+                      <MapPin className="h-5 w-5 text-morocco-600 mr-3" />
+                      <span>En ligne via Zoom</span>
+                    </div>
+                    <div className="bg-sage-100 p-3 rounded-lg">
+                      <p className="text-sm text-sage-700">
+                        <strong>Début :</strong> À partir du mois de juillet (شهر 7)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <img 
+                      src="/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c.png"
+                      alt="Professeur Ahmed Benmhan"
+                      className="w-80 h-auto rounded-2xl shadow-lg object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-2xl"></div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );
