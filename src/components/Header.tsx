@@ -1,5 +1,5 @@
 
-import { Book, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
@@ -8,17 +8,11 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
-            <div className="bg-morocco-600 p-2 rounded-lg">
-              <Book className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="font-amiri text-xl font-bold text-morocco-800">
-                معهد سوس العالمة
-              </h1>
-              <p className="text-sm text-morocco-600 font-inter">
-                Institut Souss Al-'Ālima
-              </p>
-            </div>
+            <img 
+              src="/lovable-uploads/6a837879-48e5-4a0a-8bcf-6c8c9b2816fe.png" 
+              alt="Institut Souss Al-'Ālima Logo" 
+              className="h-12 w-auto"
+            />
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
@@ -34,7 +28,10 @@ const Header = () => {
             <a href="#encadrement" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
               Encadrement
             </a>
-            <Button className="bg-morocco-600 hover:bg-morocco-700 text-white">
+            <Button 
+              className="bg-morocco-600 hover:bg-morocco-700 text-white"
+              onClick={() => window.open('https://wa.me/212628824478', '_blank')}
+            >
               S'inscrire
             </Button>
           </nav>
