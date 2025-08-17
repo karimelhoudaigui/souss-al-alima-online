@@ -11,7 +11,7 @@ const Header = () => {
             <img 
               src="/lovable-uploads/6a837879-48e5-4a0a-8bcf-6c8c9b2816fe.png" 
               alt="Institut Souss Al-'Ālima Logo" 
-              className="h-12 w-auto"
+              className="h-12 w-12 rounded-full object-cover"
             />
           </div>
           
