@@ -67,8 +67,8 @@ const MethodologySection = () => {
         {/* Onglets pour les formations */}
         <Tabs defaultValue="general" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="general">Formation Générale</TabsTrigger>
-            <TabsTrigger value="supervision">Cours avec Supervision</TabsTrigger>
+            <TabsTrigger value="general">Cursus Coran</TabsTrigger>
+            <TabsTrigger value="supervision">Cursus langue arabe</TabsTrigger>
           </TabsList>
           
           <TabsContent value="general">
