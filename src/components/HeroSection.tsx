@@ -1,9 +1,6 @@
-
 import { Button } from "@/components/ui/button";
-
 const HeroSection = () => {
-  return (
-    <section id="accueil" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-morocco-50 via-sage-50 to-morocco-100">
+  return <section id="accueil" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-morocco-50 via-sage-50 to-morocco-100">
       {/* Arabic calligraphy background */}
       <div className="absolute inset-0 opacity-5">
         <div className="font-amiri text-9xl text-morocco-800 absolute top-20 left-10 rotate-12">
@@ -22,9 +19,7 @@ const HeroSection = () => {
             <br />en ligne
           </h1>
           
-          <p className="text-xl md:text-2xl text-sage-700 mb-8 font-medium">
-            Mémorisation, Tajwīd et écriture (Rasm wa Dabt) – selon la méthode traditionnelle de Sidi Mokhtār
-          </p>
+          <p className="text-xl md:text-2xl text-sage-700 mb-8 font-medium">Mémorisation, Tajwīd et écriture (Rasm wa Dabt) </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" className="bg-morocco-600 hover:bg-morocco-700 text-white px-8 py-3 text-lg">
@@ -36,8 +31,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
