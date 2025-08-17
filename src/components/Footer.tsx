@@ -77,10 +77,17 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-morocco-100">Contact</h4>
             <div className="space-y-4">
-              <Button className="w-full bg-morocco-700 hover:bg-morocco-600 text-white">
+              <Button 
+                className="w-full bg-morocco-700 hover:bg-morocco-600 text-white"
+                onClick={() => window.open('https://wa.me/212628824478', '_blank')}
+              >
                 Nous contacter
               </Button>
-              <Button variant="outline" className="w-full border-morocco-600 text-morocco-200 hover:bg-morocco-800">
+              <Button 
+                variant="outline" 
+                className="w-full border-morocco-600 text-morocco-200 hover:bg-morocco-800"
+                onClick={() => window.open('https://wa.me/212628824478', '_blank')}
+              >
                 S'inscrire maintenant
               </Button>
             </div>
