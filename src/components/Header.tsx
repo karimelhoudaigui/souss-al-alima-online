@@ -19,11 +19,14 @@ const Header = () => {
             <a href="#accueil" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
               Accueil
             </a>
-            <a href="#cursus" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
-              Cursus Coran
+            <a href="#methode" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
+              Méthodologie
             </a>
-            <a href="#cursus" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
-              Cursus Arabe
+            <a href="#riwayat" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
+              Riwāyāt
+            </a>
+            <a href="#encadrement" className="text-morocco-700 hover:text-morocco-800 font-medium transition-colors">
+              Encadrement
             </a>
             <Button 
               className="bg-morocco-600 hover:bg-morocco-700 text-white"

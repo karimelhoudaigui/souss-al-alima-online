@@ -2,7 +2,10 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import PresentationSection from "@/components/PresentationSection";
-import CursusSection from "@/components/CursusSection";
+import MethodologySection from "@/components/MethodologySection";
+import ArabeSection from "@/components/ArabeSection";
+import RiwayatSection from "@/components/RiwayatSection";
+import EncadrementSection from "@/components/EncadrementSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -11,7 +14,10 @@ const Index = () => {
       <Header />
       <HeroSection />
       <PresentationSection />
-      <CursusSection />
+      <MethodologySection />
+      <ArabeSection />
+      <RiwayatSection />
+      <EncadrementSection />
       <Footer />
     </div>
   );
