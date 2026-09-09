@@ -89,16 +89,15 @@ const Header = () => {
             </Button>
           </nav>
           
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-3 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 shrink-0 text-white transition-transform hover:bg-white/10 hover:text-white active:scale-90 lg:hidden"
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 shrink-0 rounded-full border border-white bg-white text-morocco-950 shadow-lg transition-transform hover:bg-morocco-50 hover:text-morocco-950 active:scale-90 lg:hidden"
             aria-label={isOpen ? t.header.closeMenu : t.header.openMenu}
             onClick={() => setIsOpen((open) => !open)}
           >
             <Menu className={`absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${isOpen ? "rotate-90 scale-75 opacity-0" : "rotate-0 scale-100 opacity-100"}`} />
             <X className={`absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${isOpen ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-75 opacity-0"}`} />
-          </Button>
+          </button>
         </div>
 
         <div
