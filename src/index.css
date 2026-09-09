@@ -98,6 +98,14 @@
     box-sizing: border-box;
   }
 
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground overflow-x-hidden font-geist;
     -webkit-font-smoothing: antialiased;

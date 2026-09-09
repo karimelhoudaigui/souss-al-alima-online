@@ -22,7 +22,7 @@ const Header = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="px-4 py-4 sm:px-6 lg:px-10">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-lg border border-white/10 bg-morocco-950/70 px-3 shadow-2xl backdrop-blur-xl sm:px-5">
+        <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-between rounded-lg border border-white/10 bg-morocco-950/70 px-3 shadow-2xl backdrop-blur-xl sm:px-5">
           <a href="#accueil" className="flex items-center space-x-3">
             <img 
               src={assetPath("/lovable-uploads/6a837879-48e5-4a0a-8bcf-6c8c9b2816fe.png")}
@@ -92,7 +92,7 @@ const Header = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="relative z-50 flex h-10 w-10 shrink-0 lg:hidden text-white hover:bg-white/10 hover:text-white active:scale-90 transition-transform"
+            className="absolute right-3 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 shrink-0 text-white transition-transform hover:bg-white/10 hover:text-white active:scale-90 lg:hidden"
             aria-label={isOpen ? t.header.closeMenu : t.header.openMenu}
             onClick={() => setIsOpen((open) => !open)}
           >
