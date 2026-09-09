@@ -92,7 +92,7 @@ const ArabeSection = () => {
             <div className="relative">
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <img 
-                  src="/lovable-uploads/396e6b69-9424-40e9-9bd9-fff22c3120f3.png" 
+                  src="/lovable-uploads/396e6b69-9424-40e9-9bd9-fff22c3120f3-4k.jpeg" 
                   alt="Cheikh Sâlih Al-Manqouch As-Soussi"
                   className="w-full h-96 object-cover"
                 />

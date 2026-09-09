@@ -1,173 +1,101 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Book, BookOpen, FileText, School, Clock, MapPin, User } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  FileText,
+  Repeat2,
+  School,
+  Sparkles,
+} from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
+
+const stepIcons = [School, BookOpen, FileText, Repeat2];
+
 const MethodologySection = () => {
-  const methodFeatures = [{
-    icon: School,
-    title: "Mémorisation accompagnée",
-    description: "Apprentissage progressif avec suivi personnalisé selon la méthode traditionnelle",
-    color: "morocco"
-  }, {
-    icon: BookOpen,
-    title: "Correction individuelle",
-    description: "Murājaʿa et taṣḥīḥ pour perfectionner votre récitation",
-    color: "sage"
-  }, {
-    icon: FileText,
-    title: "Écriture coranique",
-    description: "Maîtrise du Rasm wa Dabt conforme au muṣḥaf",
-    color: "morocco"
-  }, {
-    icon: Book,
-    title: "Étude du Tajwīd",
-    description: "Apprentissage détaillé des règles à travers les textes classiques",
-    color: "sage"
-  }];
-  return <section id="methode" className="py-20 bg-gradient-to-br from-sage-50 to-morocco-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-morocco-800 mb-6">
-            Notre Méthodologie
-          </h2>
-          <div className="w-24 h-1 bg-sage-600 mx-auto mb-8"></div>
-          
-        </div>
-        
-        {/* Image illustrative de la méthode traditionnelle */}
-        <div className="mb-16">
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-4xl mx-auto">
-            <img src="/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd.png" alt="Enseignement traditionnel avec la lūḥa (tablette) - Méthode ancestrale d'apprentissage du Coran" className="w-full h-auto object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-            <div className="absolute bottom-4 left-4 right-4 text-white">
-              <p className="text-lg font-medium text-center bg-black/40 backdrop-blur-sm rounded-lg p-3">
-                L'enseignement traditionnel avec la lūḥa, adapté pour l'ère numérique
-              </p>
+  const { t } = useLanguage();
+
+  return (
+    <section id="methode" className="relative overflow-hidden bg-white py-16 sm:py-24">
+      <div className="absolute left-0 top-0 h-full w-1/3 bg-[#f8f5ef]"></div>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <div className="lg:sticky lg:top-28">
+            <p className="mb-4 text-sm font-semibold uppercase text-morocco-700">
+              {t.methodology.badge}
+            </p>
+            <h2 className="text-4xl font-medium leading-tight text-morocco-950 sm:text-5xl">
+              {t.methodology.title}
+            </h2>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-sage-800 sm:text-lg">
+              {t.methodology.body}
+            </p>
+
+            <div className="mt-8 overflow-hidden rounded-[28px] bg-morocco-950 text-white shadow-2xl">
+              <img
+                src="/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg"
+                alt={t.methodology.imageAlt}
+                className="h-72 w-full object-cover opacity-78 sm:h-96"
+              />
+              <div className="border-t border-white/10 p-5">
+                <p className="text-sm uppercase text-white/45">{t.methodology.imageBadge}</p>
+                <p className="mt-2 text-lg font-semibold leading-snug">
+                  {t.methodology.imageText}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {t.methodology.steps.map((step, index) => {
+              const Icon = stepIcons[index];
+
+              return (
+                <div
+                  key={step[0]}
+                  className="group grid gap-5 rounded-[24px] border border-sage-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-morocco-300 hover:shadow-xl sm:grid-cols-[80px_1fr_auto] sm:items-center sm:p-6"
+                >
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f8f5ef] text-morocco-800">
+                    <Icon className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold uppercase text-sage-500">
+                      {t.methodology.step} {String(index + 1).padStart(2, "0")}
+                    </p>
+                    <h3 className="mt-1 text-2xl font-semibold text-morocco-950">
+                      {step[0]}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-sage-700 sm:text-base">
+                      {step[1]}
+                    </p>
+                  </div>
+                  <ArrowRight className="hidden h-5 w-5 text-sage-300 transition-transform group-hover:translate-x-1 group-hover:text-morocco-600 sm:block" />
+                </div>
+              );
+            })}
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-[24px] bg-sage-900 p-6 text-white shadow-xl">
+                <Sparkles className="mb-6 h-6 w-6 text-morocco-200" />
+                <p className="text-sm uppercase text-white/45">{t.methodology.studentExperience}</p>
+                <p className="mt-2 text-2xl font-semibold leading-tight">
+                  {t.methodology.studentText}
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-morocco-200 bg-[#fffaf2] p-6 shadow-sm">
+                <p className="font-amiri text-3xl text-morocco-800">
+                  العلم بالتلقي
+                </p>
+                <p className="mt-4 text-sm uppercase text-sage-500">{t.methodology.principle}</p>
+                <p className="mt-2 text-lg font-semibold leading-snug text-morocco-950">
+                  {t.methodology.principleText}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {methodFeatures.map((feature, index) => <Card key={index} className={`border-${feature.color}-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
-              <CardHeader className="text-center pb-4">
-                <div className={`mx-auto mb-4 p-3 rounded-full ${feature.color === 'morocco' ? 'bg-morocco-100' : 'bg-sage-100'}`}>
-                  <feature.icon className={`h-8 w-8 ${feature.color === 'morocco' ? 'text-morocco-600' : 'text-sage-600'}`} />
-                </div>
-                <CardTitle className={`text-lg ${feature.color === 'morocco' ? 'text-morocco-800' : 'text-sage-800'}`}>
-                  {feature.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sage-600 text-center text-sm">
-                  {feature.description}
-                </p>
-              </CardContent>
-            </Card>)}
-        </div>
-        
-        {/* Onglets pour les formations */}
-        <Tabs defaultValue="general" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="general">Cursus Coran</TabsTrigger>
-            <TabsTrigger value="supervision">Cursus langue arabe</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="general">
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-morocco-800 mb-6 text-center">
-                Enseignement théorique et pratique
-              </h3>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h4 className="text-xl font-semibold text-morocco-700 mb-4">Théorique</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <span className="text-morocco-500 mr-2">•</span>
-                      <span className="text-sage-700">Étude de <em>Tuhfat al-Aṭfāl</em></span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-morocco-500 mr-2">•</span>
-                      <span className="text-sage-700">Apprentissage d'<em>al-Jazariyya</em></span>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-xl font-semibold text-sage-700 mb-4">Pratique</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <span className="text-sage-500 mr-2">•</span>
-                      <span className="text-sage-700">Suivi personnalisé en mémorisation</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-sage-500 mr-2">•</span>
-                      <span className="text-sage-700">Application concrète du tajwīd</span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-sage-500 mr-2">•</span>
-                      <span className="text-sage-700">Maîtrise de l'écriture coranique</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="supervision">
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h3 className="text-2xl font-bold text-morocco-800 mb-6">
-                    Formation sous supervision
-                  </h3>
-                  
-                  <div className="mb-6">
-                    <p className="text-lg text-sage-700 mb-4">
-                      L'Institut Souss Al-'Ālima propose des cours théoriques et pratiques en{" "}
-                      <span className="font-amiri text-xl text-morocco-600">رواية ورش من طريق يوسف الأرزاق</span>, 
-                      conformément à la tradition des écoles marocaines.
-                    </p>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <h4 className="text-lg font-semibold text-morocco-700 mb-3 flex items-center">
-                      <User className="h-5 w-5 mr-2" />
-                      Sous la supervision de :
-                    </h4>
-                    <div className="bg-morocco-50 p-4 rounded-lg">
-                      <p className="font-bold text-morocco-800">Pr. Ahmed Benmhan</p>
-                      <p className="text-sage-700 text-sm">
-                        Professeur de تجويد et producteur de programmes à la Radio Mohammed VI du Saint Coran
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sage-700">
-                      <Clock className="h-5 w-5 text-morocco-600 mr-3" />
-                      <span>Chaque jeudi à 21h00 (heure du Maroc)</span>
-                    </div>
-                    <div className="flex items-center text-sage-700">
-                      <MapPin className="h-5 w-5 text-morocco-600 mr-3" />
-                      <span>En ligne via Zoom</span>
-                    </div>
-                    <div className="bg-sage-100 p-3 rounded-lg">
-                      <p className="text-sm text-sage-700">
-                        <strong>Début :</strong> À partir du mois de juillet (شهر 7)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex justify-center">
-                  <div className="relative">
-                    <img src="/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c.png" alt="Professeur Ahmed Benmhan" className="w-80 h-auto rounded-2xl shadow-lg object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-2xl"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default MethodologySection;

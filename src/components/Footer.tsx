@@ -1,8 +1,15 @@
 
-import { Book, Calendar, FileText, Folder } from "lucide-react";
+import { Book, Calendar, FileText, Folder, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getWhatsAppLink, PHONE_LINK, WHATSAPP_DISPLAY_NUMBER } from "@/lib/contact";
+import { useLanguage } from "@/lib/i18n";
+
+const quickLinks = ["#accueil", "#cursus", "#methode", "#riwayat", "#encadrement", "#contact"];
+const featureIcons = [Calendar, FileText, Folder, Book];
 
 const Footer = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-morocco-900 text-white py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,80 +22,60 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="font-amiri text-lg font-bold">معهد سوس العالمة</h3>
-                <p className="text-sm text-morocco-200">Institut Souss Al-'Ālima</p>
+                <p className="text-sm text-morocco-200">{t.header.institute}</p>
               </div>
             </div>
             <p className="text-morocco-200 text-sm">
-              Enseignement traditionnel du Coran en ligne selon la méthode de Sidi Mokhtār
+              {t.footer.description}
             </p>
           </div>
           
           {/* Fonctionnalités */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-morocco-100">Fonctionnalités</h4>
+            <h4 className="text-lg font-semibold text-morocco-100">{t.footer.features}</h4>
             <ul className="space-y-2">
-              <li className="flex items-center text-morocco-200 text-sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                Cours en ligne programmés
-              </li>
-              <li className="flex items-center text-morocco-200 text-sm">
-                <FileText className="h-4 w-4 mr-2" />
-                Fiches PDF téléchargeables
-              </li>
-              <li className="flex items-center text-morocco-200 text-sm">
-                <Folder className="h-4 w-4 mr-2" />
-                Espace personnel élève
-              </li>
-              <li className="flex items-center text-morocco-200 text-sm">
-                <Book className="h-4 w-4 mr-2" />
-                Accès aux vidéos de cours
-              </li>
+              {t.footer.featureItems.map((item, index) => {
+                const Icon = featureIcons[index];
+
+                return (
+                  <li key={item} className="flex items-center text-morocco-200 text-sm">
+                    <Icon className="h-4 w-4 mr-2" />
+                    {item}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           
           {/* Liens rapides */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-morocco-100">Liens rapides</h4>
+            <h4 className="text-lg font-semibold text-morocco-100">{t.footer.links}</h4>
             <ul className="space-y-2">
-              <li>
-                <a href="#accueil" className="text-morocco-200 hover:text-white text-sm transition-colors">
-                  Accueil
-                </a>
-              </li>
-              <li>
-                <a href="#methode" className="text-morocco-200 hover:text-white text-sm transition-colors">
-                  Méthodologie
-                </a>
-              </li>
-              <li>
-                <a href="#riwayat" className="text-morocco-200 hover:text-white text-sm transition-colors">
-                  Riwāyāt
-                </a>
-              </li>
-              <li>
-                <a href="#encadrement" className="text-morocco-200 hover:text-white text-sm transition-colors">
-                  Encadrement
-                </a>
-              </li>
+              {quickLinks.map((href, index) => (
+                <li key={href}>
+                  <a href={href} className="text-morocco-200 hover:text-white text-sm transition-colors">
+                    {t.header.nav[index]}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
           
           {/* Contact */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-morocco-100">Contact</h4>
+            <h4 className="text-lg font-semibold text-morocco-100">{t.footer.contact}</h4>
             <div className="space-y-4">
-              <Button 
-                className="w-full bg-morocco-700 hover:bg-morocco-600 text-white"
-                onClick={() => window.open('https://wa.me/212628824478', '_blank')}
-              >
-                Nous contacter
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full border-morocco-600 text-morocco-200 hover:bg-morocco-800"
-                onClick={() => window.open('https://wa.me/212628824478', '_blank')}
-              >
-                S'inscrire maintenant
+              <p className="text-morocco-200 text-sm">
+                WhatsApp :{" "}
+                <a href={`tel:${PHONE_LINK}`} className="font-semibold hover:text-white">
+                  {WHATSAPP_DISPLAY_NUMBER}
+                </a>
+              </p>
+              <Button asChild className="w-full bg-morocco-700 hover:bg-morocco-600 text-white">
+                <a href={getWhatsAppLink(t.contact.messages.information)} target="_blank" rel="noreferrer">
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp
+                </a>
               </Button>
             </div>
           </div>
@@ -97,7 +84,7 @@ const Footer = () => {
         <div className="border-t border-morocco-800 mt-12 pt-8 text-center">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-morocco-300 text-sm">
-              © 2024 Institut Souss Al-'Ālima. Tous droits réservés.
+              {t.footer.rights}
             </p>
             <div className="font-amiri text-morocco-400 text-sm mt-2 md:mt-0">
               وَقُلْ رَبِّ زِدْنِي عِلْمًا

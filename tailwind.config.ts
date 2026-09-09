@@ -1,5 +1,6 @@
 
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -21,6 +22,7 @@ export default {
 		extend: {
 			fontFamily: {
 				'amiri': ['Amiri', 'serif'],
+				'geist': ['Geist', 'sans-serif'],
 				'inter': ['Inter', 'sans-serif'],
 			},
 			colors: {
@@ -36,6 +38,7 @@ export default {
 					700: '#a1470c',
 					800: '#843912',
 					900: '#6d2f12',
+					950: '#2b1609',
 				},
 				'sage': {
 					50: '#f6f7f4',
@@ -133,5 +136,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;
