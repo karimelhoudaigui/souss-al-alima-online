@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { ArrowRight, BookOpen, GraduationCap, MapPin, ShieldCheck, Users } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 import { useLanguage } from "@/lib/i18n";
 
 const profiles = [
   {
     name: "Sidi Mohammed Nît 'Abd Allah al-Tāfrawtī al-Sūsī",
-    image: "/lovable-uploads/3a077fe5-1c67-4d03-b9cd-3c07ecc5027d-4k.jpeg",
+    image: assetPath("/lovable-uploads/3a077fe5-1c67-4d03-b9cd-3c07ecc5027d-4k.jpeg"),
   },
   {
     name: "Sidi Ibrāhīm Amrāḥ al-Baʿmranī",
-    image: "/lovable-uploads/ce4a0e7d-bad0-44df-820d-e868f0f9b7ae-4k.jpeg",
+    image: assetPath("/lovable-uploads/ce4a0e7d-bad0-44df-820d-e868f0f9b7ae-4k.jpeg"),
   },
   {
     name: "Hussein Jbara",
-    image: "/lovable-uploads/52f4854d-35b0-4f5f-a86a-0c41daedb49d-4k.jpeg",
+    image: assetPath("/lovable-uploads/52f4854d-35b0-4f5f-a86a-0c41daedb49d-4k.jpeg"),
   },
 ];
 

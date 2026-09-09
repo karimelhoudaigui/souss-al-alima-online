@@ -6,6 +6,7 @@ import {
   School,
   Sparkles,
 } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 import { useLanguage } from "@/lib/i18n";
 
 const stepIcons = [School, BookOpen, FileText, Repeat2];
@@ -32,7 +33,7 @@ const MethodologySection = () => {
 
             <div className="mt-8 overflow-hidden rounded-[28px] bg-morocco-950 text-white shadow-2xl">
               <img
-                src="/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg"
+                src={assetPath("/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg")}
                 alt={t.methodology.imageAlt}
                 className="h-72 w-full object-cover opacity-78 sm:h-96"
               />

@@ -13,6 +13,7 @@ import {
   Sparkles,
   UserCheck,
 } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 import { getWhatsAppLink } from "@/lib/contact";
 import { useLanguage } from "@/lib/i18n";
 
@@ -30,7 +31,7 @@ const cursus: Cursus[] = [
   {
     icon: BookOpen,
     arabic: "القرآن الكريم",
-    image: "/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg",
+    image: assetPath("/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg"),
     accent: "bg-morocco-500",
     supervisor: {
       name: "Hussein Jbara",
@@ -39,7 +40,7 @@ const cursus: Cursus[] = [
   {
     icon: GraduationCap,
     arabic: "علم التجويد",
-    image: "/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c-4k.jpeg",
+    image: assetPath("/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c-4k.jpeg"),
     accent: "bg-sage-500",
     supervisor: {
       name: "Pr. Ahmed Benmhan",
@@ -48,7 +49,7 @@ const cursus: Cursus[] = [
   {
     icon: Languages,
     arabic: "النحو العربي",
-    image: "/lovable-uploads/396e6b69-9424-40e9-9bd9-fff22c3120f3-4k.jpeg",
+    image: assetPath("/lovable-uploads/396e6b69-9424-40e9-9bd9-fff22c3120f3-4k.jpeg"),
     accent: "bg-teal-700",
     supervisor: {
       name: "Cheikh Sâlih Al-Manqouch As-Soussi",

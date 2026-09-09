@@ -1,7 +1,13 @@
 
-import { Book, Calendar, FileText, Folder, MessageCircle } from "lucide-react";
+import { Book, Calendar, ExternalLink, FileText, Folder, Instagram, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getWhatsAppLink, PHONE_LINK, WHATSAPP_DISPLAY_NUMBER } from "@/lib/contact";
+import {
+  FACEBOOK_URL,
+  getWhatsAppLink,
+  INSTAGRAM_URL,
+  PHONE_LINK,
+  WHATSAPP_DISPLAY_NUMBER,
+} from "@/lib/contact";
 import { useLanguage } from "@/lib/i18n";
 
 const quickLinks = ["#accueil", "#cursus", "#methode", "#riwayat", "#encadrement", "#contact"];
@@ -77,6 +83,26 @@ const Footer = () => {
                   WhatsApp
                 </a>
               </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={FACEBOOK_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 rounded-md border border-morocco-700 px-3 py-2 text-sm font-medium text-morocco-100 transition-colors hover:bg-morocco-800 hover:text-white"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Facebook
+                </a>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 rounded-md border border-morocco-700 px-3 py-2 text-sm font-medium text-morocco-100 transition-colors hover:bg-morocco-800 hover:text-white"
+                >
+                  <Instagram className="h-4 w-4" />
+                  Instagram
+                </a>
+              </div>
             </div>
           </div>
         </div>

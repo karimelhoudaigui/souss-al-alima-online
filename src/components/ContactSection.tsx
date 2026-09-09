@@ -1,6 +1,17 @@
-import { ArrowRight, CheckCircle2, MessageCircle, Phone, Send } from "lucide-react";
 import {
+  ArrowRight,
+  CheckCircle2,
+  ExternalLink,
+  Instagram,
+  MessageCircle,
+  Phone,
+  Send,
+} from "lucide-react";
+import { assetPath } from "@/lib/assets";
+import {
+  FACEBOOK_URL,
   getWhatsAppLink,
+  INSTAGRAM_URL,
   PHONE_LINK,
   WHATSAPP_DISPLAY_NUMBER,
 } from "@/lib/contact";
@@ -29,7 +40,7 @@ const ContactSection = () => {
           <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.06] p-5 shadow-2xl backdrop-blur-2xl sm:p-8 lg:p-10">
             <div className="absolute right-0 top-0 hidden h-full w-1/2 lg:block">
               <img
-                src="/lovable-uploads/souss-hero-4k.jpeg"
+                src={assetPath("/lovable-uploads/souss-hero-4k.jpeg")}
                 alt={t.contact.imageAlt}
                 className="h-full w-full object-cover opacity-30"
               />
@@ -104,6 +115,27 @@ const ContactSection = () => {
               {t.contact.seeCursus}
               <ArrowRight className="h-5 w-5" />
             </a>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-sage-200 px-4 py-3 text-sm font-semibold text-sage-800 transition-colors hover:bg-sage-50"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Facebook
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-sage-200 px-4 py-3 text-sm font-semibold text-sage-800 transition-colors hover:bg-sage-50"
+              >
+                <Instagram className="h-4 w-4" />
+                Instagram
+              </a>
+            </div>
 
             <div className="mt-6 rounded-2xl border border-sage-200 p-5">
               <Phone className="mb-4 h-5 w-5 text-morocco-700" />

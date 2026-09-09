@@ -1,8 +1,9 @@
 
 import { useState } from "react";
-import { Menu, MessageCircle, X } from "lucide-react";
+import { ExternalLink, Instagram, Menu, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getWhatsAppLink } from "@/lib/contact";
+import { assetPath } from "@/lib/assets";
+import { FACEBOOK_URL, getWhatsAppLink, INSTAGRAM_URL } from "@/lib/contact";
 import { languages, useLanguage } from "@/lib/i18n";
 
 const navItems = [
@@ -24,7 +25,7 @@ const Header = () => {
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between rounded-lg border border-white/10 bg-morocco-950/70 px-3 shadow-2xl backdrop-blur-xl sm:px-5">
           <a href="#accueil" className="flex items-center space-x-3">
             <img 
-              src="/lovable-uploads/6a837879-48e5-4a0a-8bcf-6c8c9b2816fe.png" 
+              src={assetPath("/lovable-uploads/6a837879-48e5-4a0a-8bcf-6c8c9b2816fe.png")}
               alt="Institut Souss Al-'Ālima Logo" 
               className="h-10 w-10 rounded-full object-cover ring-1 ring-white/20"
             />
@@ -59,6 +60,26 @@ const Header = () => {
                   {item.label}
                 </button>
               ))}
+            </div>
+            <div className="flex items-center gap-1">
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-white/65 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-white/65 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
             </div>
             <Button asChild className="bg-white text-morocco-950 hover:bg-morocco-50">
               <a href={getWhatsAppLink(t.contact.messages.inscription)} target="_blank" rel="noreferrer">
@@ -116,6 +137,28 @@ const Header = () => {
                     {item.label}
                   </button>
                 ))}
+              </div>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <a
+                  href={FACEBOOK_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white/85"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Facebook
+                </a>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white/85"
+                >
+                  <Instagram className="h-4 w-4" />
+                  Instagram
+                </a>
               </div>
               <Button asChild className="mt-6 rounded-full bg-white px-8 py-6 text-base font-medium text-morocco-950 hover:bg-morocco-50 hover:scale-105 transition-transform">
                 <a

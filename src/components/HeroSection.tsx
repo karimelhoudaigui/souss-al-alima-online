@@ -1,4 +1,5 @@
 import { ArrowRight, BookOpen, MessageCircle } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 import { getWhatsAppLink } from "@/lib/contact";
 import { useLanguage } from "@/lib/i18n";
 
@@ -7,7 +8,7 @@ const HeroSection = () => {
 
   return <section id="accueil" className="relative flex min-h-screen w-full overflow-hidden bg-morocco-950 text-white">
       <img
-        src="/lovable-uploads/souss-hero-4k.jpeg"
+        src={assetPath("/lovable-uploads/souss-hero-4k.jpeg")}
         alt={t.hero.imageAlt}
         className="absolute inset-0 h-full w-full object-cover object-[55%_center] opacity-75"
       />

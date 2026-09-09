@@ -1,4 +1,5 @@
 import { ArrowRight, BookMarked, Globe2, MapPin, ShieldCheck } from "lucide-react";
+import { assetPath } from "@/lib/assets";
 import { useLanguage } from "@/lib/i18n";
 
 const pillarIcons = [BookMarked, MapPin, Globe2];
@@ -14,7 +15,7 @@ const PresentationSection = () => {
         <div className="order-2 lg:order-1">
           <div className="relative overflow-hidden rounded-[28px] bg-morocco-950 text-white shadow-2xl sm:rounded-[34px]">
             <img
-              src="/lovable-uploads/souss-hero-4k.jpeg"
+              src={assetPath("/lovable-uploads/souss-hero-4k.jpeg")}
               alt={t.presentation.imageAlt}
               className="h-[430px] w-full object-cover opacity-72 sm:h-[560px]"
             />
