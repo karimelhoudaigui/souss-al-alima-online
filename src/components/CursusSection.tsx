@@ -13,7 +13,7 @@ import {
   Sparkles,
   UserCheck,
 } from "lucide-react";
-import { assetPath } from "@/lib/assets";
+import { assetPath, videoAssets } from "@/lib/assets";
 import { getWhatsAppLink } from "@/lib/contact";
 import { useLanguage } from "@/lib/i18n";
 
@@ -67,8 +67,20 @@ const CursusSection = () => {
 
   return (
     <section id="cursus" className="relative overflow-hidden bg-morocco-950 py-16 text-white sm:py-24">
+      <video
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.28]"
+        src={videoAssets.cursus}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={assetPath("/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg")}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-morocco-950/70"></div>
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px]"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-morocco-950 via-morocco-950/95 to-[#10241f]"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-morocco-950 via-morocco-950/88 to-[#10241f]"></div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 border-b border-white/10 pb-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
@@ -83,6 +95,63 @@ const CursusSection = () => {
           <p className="max-w-2xl text-base leading-relaxed text-white/62 sm:text-lg lg:ml-auto animate-[fadeSlideUp_0.8s_ease_0.4s_both]">
             {t.cursus.body}
           </p>
+        </div>
+
+        <div className="mt-8">
+          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <p className="text-lg font-semibold text-white">{t.cursus.labels.availableTitle}</p>
+            <p className="text-sm text-white/50">{t.cursus.labels.availableSub}</p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {cursus.map((item, index) => {
+              const Icon = item.icon;
+              const isSelected = selectedIndex === index;
+              const copy = t.cursus.items[index];
+
+              return (
+                <button
+                  key={copy.title}
+                  type="button"
+                  onClick={() => {
+                    setSelectedIndex(index);
+                    setDetailsOpen(false);
+                  }}
+                  className={`group relative overflow-hidden rounded-[24px] border p-4 text-left transition-all duration-300 sm:p-5 ${
+                    isSelected
+                      ? "border-white bg-white text-morocco-950 shadow-2xl"
+                      : "border-white/10 bg-white/[0.08] text-white backdrop-blur-xl hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.12]"
+                  }`}
+                >
+                  <div className={`absolute inset-x-0 top-0 h-1 ${item.accent}`}></div>
+                  <div className="flex items-start justify-between gap-4">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
+                      isSelected ? "bg-morocco-100 text-morocco-900" : "bg-black/25 text-morocco-100"
+                    }`}>
+                      <Icon className="h-6 w-6" />
+                    </span>
+                    <ArrowRight className={`mt-3 h-5 w-5 transition-transform ${
+                      isSelected ? "text-morocco-700" : "text-white/40 group-hover:translate-x-1 group-hover:text-white"
+                    }`} />
+                  </div>
+                  <p className={`mt-5 font-amiri text-2xl ${isSelected ? "text-morocco-900" : "text-white"}`}>
+                    {item.arabic}
+                  </p>
+                  <h3 className="mt-1 text-xl font-semibold">{copy.title}</h3>
+                  <p className={`mt-2 text-sm leading-relaxed ${isSelected ? "text-sage-700" : "text-white/60"}`}>
+                    {copy.subtitle}
+                  </p>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-semibold uppercase">
+                    <span className={`rounded-full px-3 py-2 ${isSelected ? "bg-morocco-50 text-morocco-800" : "bg-white/10 text-white/70"}`}>
+                      {copy.rhythm}
+                    </span>
+                    <span className={`rounded-full px-3 py-2 ${isSelected ? "bg-sage-50 text-sage-800" : "bg-white/10 text-white/70"}`}>
+                      {copy.level}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="mt-8 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">

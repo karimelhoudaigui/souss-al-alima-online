@@ -61,6 +61,8 @@ export const translations = {
       body: "L'élève choisit son parcours, comprend immédiatement le niveau attendu, l'objectif visé et l'encadrement proposé, puis peut écrire directement à l'institut sur WhatsApp.",
       ticker: ["Coran", "Tajwīd", "Warsh", "Rasm wa Dabt", "Langue arabe", "Suivi individuel", "Transmission", "Zoom"],
       labels: {
+        availableTitle: "Cursus disponibles",
+        availableSub: "Choisis un parcours pour voir le détail",
         rhythm: "Rythme",
         level: "Niveau",
         outcome: "Objectif",
@@ -254,6 +256,8 @@ export const translations = {
       body: "Students choose a path, immediately understand the expected level, the goal and the supervision, then contact the institute directly on WhatsApp.",
       ticker: ["Quran", "Tajwīd", "Warsh", "Rasm wa Dabt", "Arabic", "Individual follow-up", "Transmission", "Zoom"],
       labels: {
+        availableTitle: "Available courses",
+        availableSub: "Choose a path to view details",
         rhythm: "Rhythm",
         level: "Level",
         outcome: "Goal",
@@ -409,6 +413,8 @@ export const translations = {
       body: "El alumno elige su recorrido, comprende de inmediato el nivel esperado, el objetivo y la supervisión, y puede escribir directamente al instituto por WhatsApp.",
       ticker: ["Corán", "Tajwīd", "Warsh", "Rasm wa Dabt", "Árabe", "Seguimiento individual", "Transmisión", "Zoom"],
       labels: {
+        availableTitle: "Cursos disponibles",
+        availableSub: "Elige un recorrido para ver el detalle",
         rhythm: "Ritmo",
         level: "Nivel",
         outcome: "Objetivo",

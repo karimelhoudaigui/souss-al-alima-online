@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, MapPinned, Route, Sparkles } from "lucide-react";
+import { assetPath, videoAssets } from "@/lib/assets";
 import { useLanguage } from "@/lib/i18n";
 
 const riwayat = [
@@ -26,6 +27,18 @@ const RiwayatSection = () => {
 
   return (
     <section id="riwayat" className="relative overflow-hidden bg-[#f8f5ef] py-16 sm:py-24">
+      <video
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.18]"
+        src={videoAssets.tradition}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={assetPath("/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c-4k.jpeg")}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-[#f8f5ef]/82"></div>
       <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white to-transparent"></div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -84,6 +97,18 @@ const RiwayatSection = () => {
           </div>
 
           <div className="relative min-h-[560px] overflow-hidden rounded-[30px] bg-morocco-950 p-5 text-white shadow-2xl sm:p-8">
+            <video
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.32] mix-blend-luminosity"
+              src={videoAssets.tradition}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={assetPath("/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c-4k.jpeg")}
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-morocco-950/70"></div>
             <div
               className="absolute inset-[-25%] opacity-25 animate-spin-bg"
               style={{

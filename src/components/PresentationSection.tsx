@@ -17,7 +17,7 @@ const PresentationSection = () => {
             <img
               src={assetPath("/lovable-uploads/souss-hero-4k.jpeg")}
               alt={t.presentation.imageAlt}
-              className="h-[430px] w-full object-cover opacity-72 sm:h-[560px]"
+              className="h-[430px] w-full object-cover opacity-[0.72] sm:h-[560px]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-morocco-950 via-morocco-950/22 to-transparent"></div>
             <div className="absolute inset-x-4 bottom-4 rounded-2xl border border-white/12 bg-black/35 p-4 backdrop-blur-2xl sm:inset-x-6 sm:bottom-6 sm:p-5">

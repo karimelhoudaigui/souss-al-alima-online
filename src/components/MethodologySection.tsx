@@ -6,7 +6,7 @@ import {
   School,
   Sparkles,
 } from "lucide-react";
-import { assetPath } from "@/lib/assets";
+import { assetPath, videoAssets } from "@/lib/assets";
 import { useLanguage } from "@/lib/i18n";
 
 const stepIcons = [School, BookOpen, FileText, Repeat2];
@@ -16,7 +16,19 @@ const MethodologySection = () => {
 
   return (
     <section id="methode" className="relative overflow-hidden bg-white py-16 sm:py-24">
-      <div className="absolute left-0 top-0 h-full w-1/3 bg-[#f8f5ef]"></div>
+      <video
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.14]"
+        src={videoAssets.tradition}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={assetPath("/lovable-uploads/souss-hero-4k.jpeg")}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-white/88"></div>
+      <div className="absolute left-0 top-0 h-full w-1/3 bg-[#f8f5ef]/85"></div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -32,10 +44,16 @@ const MethodologySection = () => {
             </p>
 
             <div className="mt-8 overflow-hidden rounded-[28px] bg-morocco-950 text-white shadow-2xl">
-              <img
-                src={assetPath("/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg")}
-                alt={t.methodology.imageAlt}
-                className="h-72 w-full object-cover opacity-78 sm:h-96"
+              <video
+                className="pointer-events-none h-72 w-full object-cover opacity-[0.85] sm:h-96"
+                src={videoAssets.tradition}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster={assetPath("/lovable-uploads/a58cd622-7e2a-4c59-a2e9-966de0fd84dd-4k.jpeg")}
+                aria-label={t.methodology.imageAlt}
               />
               <div className="border-t border-white/10 p-5">
                 <p className="text-sm uppercase text-white/45">{t.methodology.imageBadge}</p>
