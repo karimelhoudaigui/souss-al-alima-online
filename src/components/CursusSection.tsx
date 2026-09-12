@@ -2,11 +2,9 @@ import { useState } from "react";
 import {
   ArrowRight,
   BookOpen,
-  CheckCircle2,
   GraduationCap,
   Languages,
   MessageCircle,
-  UserCheck,
 } from "lucide-react";
 import { assetPath, videoAssets } from "@/lib/assets";
 import { getWhatsAppLink } from "@/lib/contact";
@@ -60,7 +58,7 @@ const CursusSection = () => {
   const SelectedIcon = selected.icon;
 
   return (
-    <section id="cursus" className="relative overflow-hidden bg-morocco-950 py-16 text-white sm:py-24">
+    <section id="cursus" className="relative overflow-hidden bg-morocco-950 py-20 text-white sm:py-28">
       <video
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.28]"
         src={videoAssets.cursus}
@@ -73,26 +71,25 @@ const CursusSection = () => {
         aria-hidden="true"
       />
       <div className="absolute inset-0 bg-morocco-950/70"></div>
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px]"></div>
       <div className="absolute inset-0 bg-gradient-to-b from-morocco-950 via-morocco-950/88 to-[#10241f]"></div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 border-b border-white/10 pb-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase text-morocco-200 animate-[fadeSlideUp_0.8s_ease_0.1s_both]">
+            <p className="mb-3 text-sm font-semibold uppercase text-morocco-200">
               {t.cursus.badge}
             </p>
-            <h2 className="max-w-2xl text-4xl font-medium leading-tight text-white sm:text-5xl lg:text-6xl animate-[fadeSlideUp_0.8s_ease_0.25s_both]">
+            <h2 className="max-w-2xl text-4xl font-medium leading-tight text-white sm:text-5xl lg:text-6xl">
               {t.cursus.title}
             </h2>
           </div>
-          <p className="max-w-2xl text-base leading-relaxed text-white/62 sm:text-lg lg:ml-auto animate-[fadeSlideUp_0.8s_ease_0.4s_both]">
+          <p className="max-w-2xl text-base leading-relaxed text-white/62 sm:text-lg lg:ml-auto">
             {t.cursus.body}
           </p>
         </div>
 
-        <div className="mt-10">
-          <div className="mb-5 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mt-12">
+          <div className="mb-6 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <p className="text-lg font-semibold text-white">{t.cursus.labels.availableTitle}</p>
             <p className="text-sm text-white/50">{t.cursus.labels.availableSub}</p>
           </div>
@@ -107,15 +104,15 @@ const CursusSection = () => {
                   key={copy.title}
                   type="button"
                   onClick={() => setSelectedIndex(index)}
-                  className={`group relative overflow-hidden rounded-[22px] border p-5 text-left transition-all duration-300 sm:p-6 ${
+                  className={`group relative overflow-hidden rounded-lg border p-5 text-left transition-all duration-300 sm:p-6 ${
                     isSelected
-                      ? "border-white bg-white text-morocco-950 shadow-2xl"
-                      : "border-white/10 bg-white/[0.07] text-white backdrop-blur-xl hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.11]"
+                      ? "border-white bg-white text-morocco-950 shadow-xl"
+                      : "border-white/10 bg-white/[0.06] text-white backdrop-blur-xl hover:border-white/25 hover:bg-white/[0.1]"
                   }`}
                 >
                   <div className={`absolute inset-x-0 top-0 h-1 ${item.accent}`}></div>
                   <div className="flex items-start justify-between gap-4">
-                    <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-lg ${
                       isSelected ? "bg-morocco-100 text-morocco-900" : "bg-black/25 text-morocco-100"
                     }`}>
                       <Icon className="h-6 w-6" />
@@ -141,7 +138,7 @@ const CursusSection = () => {
           </div>
         </div>
 
-        <div className="mt-10 overflow-hidden rounded-[28px] border border-white/10 bg-[#f8f5ef] text-morocco-950 shadow-2xl sm:rounded-[34px]">
+        <div className="mt-10 overflow-hidden rounded-lg border border-white/10 bg-[#f8f5ef] text-morocco-950 shadow-xl">
           <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
             <div className="relative min-h-[320px] overflow-hidden lg:min-h-full">
               <img
@@ -150,13 +147,13 @@ const CursusSection = () => {
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-morocco-950/45 via-transparent to-transparent lg:bg-gradient-to-r"></div>
-              <div className="absolute bottom-5 left-5 inline-flex items-center gap-3 rounded-full border border-white/20 bg-black/35 px-4 py-2 text-white backdrop-blur-xl">
+              <div className="absolute bottom-5 left-5 inline-flex items-center gap-3 rounded-lg border border-white/20 bg-black/35 px-4 py-2 text-white backdrop-blur-xl">
                 <SelectedIcon className="h-4 w-4 text-morocco-100" />
                 <span className="font-amiri text-lg">{selected.arabic}</span>
               </div>
             </div>
 
-            <div className="p-5 sm:p-8 lg:p-10">
+            <div className="p-6 sm:p-8 lg:p-12">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase text-morocco-700">
                   {t.cursus.labels.keyPoints}
@@ -172,35 +169,32 @@ const CursusSection = () => {
                 </p>
               </div>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-morocco-100 bg-white p-4">
+              <dl className="mt-8 grid gap-5 border-y border-morocco-200 py-6 sm:grid-cols-3">
+                <div>
                   <p className="text-xs font-semibold uppercase text-sage-500">{t.cursus.labels.rhythm}</p>
                   <p className="mt-2 font-semibold text-morocco-950">{selectedCopy.rhythm}</p>
                 </div>
-                <div className="rounded-2xl border border-morocco-100 bg-white p-4">
+                <div>
                   <p className="text-xs font-semibold uppercase text-sage-500">{t.cursus.labels.level}</p>
                   <p className="mt-2 font-semibold text-morocco-950">{selectedCopy.level}</p>
                 </div>
-                <div className="rounded-2xl border border-morocco-100 bg-white p-4">
+                <div>
                   <p className="text-xs font-semibold uppercase text-sage-500">{t.cursus.labels.outcome}</p>
                   <p className="mt-2 font-semibold text-morocco-950">{selectedCopy.outcome}</p>
                 </div>
-              </div>
+              </dl>
 
-              <div className="mt-8 grid gap-3">
+              <ul className="mt-8 space-y-4">
                 {selectedCopy.points.map((point) => (
-                  <div key={point} className="flex gap-3 rounded-2xl bg-white p-4 text-sm leading-relaxed text-sage-800">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-morocco-700" />
+                  <li key={point} className="flex gap-3 text-sm leading-relaxed text-sage-800 sm:text-base">
+                    <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-morocco-700" />
                     <span>{point}</span>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
 
-              <div className="mt-8 grid gap-4 border-t border-morocco-200 pt-6 sm:grid-cols-[1fr_auto] sm:items-center">
-                <div className="flex gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-morocco-100">
-                    <UserCheck className="h-5 w-5 text-morocco-800" />
-                  </div>
+              <div className="mt-8 grid gap-5 border-t border-morocco-200 pt-6 sm:grid-cols-[1fr_auto] sm:items-center">
+                <div>
                   <div>
                     <p className="text-sm font-semibold uppercase text-sage-500">{t.cursus.labels.supervision}</p>
                     <p className="mt-1 text-lg font-semibold text-morocco-950">{selected.supervisor.name}</p>

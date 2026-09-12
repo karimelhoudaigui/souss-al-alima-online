@@ -1,18 +1,16 @@
 
 import { useState } from "react";
-import { ExternalLink, Instagram, Menu, MessageCircle, X } from "lucide-react";
+import { Menu, MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { assetPath } from "@/lib/assets";
-import { FACEBOOK_URL, getWhatsAppLink, INSTAGRAM_URL } from "@/lib/contact";
+import { getWhatsAppLink } from "@/lib/contact";
 import { languages, useLanguage } from "@/lib/i18n";
 
 const navItems = [
-  { href: "#accueil" },
-  { href: "#cursus" },
-  { href: "#methode" },
-  { href: "#riwayat" },
-  { href: "#encadrement" },
-  { href: "#contact" },
+  { href: "#accueil", labelIndex: 0 },
+  { href: "#cursus", labelIndex: 1 },
+  { href: "#methode", labelIndex: 2 },
+  { href: "#contact", labelIndex: 5 },
 ];
 
 const Header = () => {
@@ -22,7 +20,7 @@ const Header = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="px-4 py-4 sm:px-6 lg:px-10">
-        <div className="relative mx-auto flex h-14 max-w-7xl items-center justify-between rounded-lg border border-white/10 bg-morocco-950/70 px-3 shadow-2xl backdrop-blur-xl sm:px-5">
+        <div className="relative mx-auto flex h-14 w-full max-w-7xl items-center justify-between rounded-lg border border-white/10 bg-morocco-950/72 px-3 shadow-xl backdrop-blur-xl sm:px-5">
           <a href="#accueil" className="flex items-center space-x-3">
             <img 
               src={assetPath("/lovable-uploads/6a837879-48e5-4a0a-8bcf-6c8c9b2816fe.png")}
@@ -35,14 +33,14 @@ const Header = () => {
             </div>
           </a>
           
-          <nav className="hidden lg:flex items-center space-x-5">
-            {navItems.map((item, index) => (
+          <nav className="hidden items-center space-x-6 lg:flex">
+            {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 className="text-sm font-medium text-white/70 hover:text-white transition-colors"
               >
-                {t.header.nav[index]}
+                {t.header.nav[item.labelIndex]}
               </a>
             ))}
             <div className="flex items-center rounded-full border border-white/10 bg-white/[0.08] p-1" aria-label={t.header.language}>
@@ -60,26 +58,6 @@ const Header = () => {
                   {item.label}
                 </button>
               ))}
-            </div>
-            <div className="flex items-center gap-1">
-              <a
-                href={FACEBOOK_URL}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Facebook"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-white/65 transition-colors hover:bg-white/10 hover:text-white"
-              >
-                <ExternalLink className="h-4 w-4" />
-              </a>
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-white/65 transition-colors hover:bg-white/10 hover:text-white"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
             </div>
             <Button asChild className="bg-white text-morocco-950 hover:bg-morocco-50">
               <a href={getWhatsAppLink(t.contact.messages.inscription)} target="_blank" rel="noreferrer">
@@ -111,14 +89,14 @@ const Header = () => {
             }`}
           >
             <div className="grid gap-1">
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
                   className="py-4 text-3xl font-medium text-white/90 hover:text-white transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
-                  {t.header.nav[index]}
+                  {t.header.nav[item.labelIndex]}
                 </a>
               ))}
               <div className="mt-5 flex w-max items-center rounded-full border border-white/10 bg-white/[0.08] p-1" aria-label={t.header.language}>
@@ -136,28 +114,6 @@ const Header = () => {
                     {item.label}
                   </button>
                 ))}
-              </div>
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <a
-                  href={FACEBOOK_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white/85"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Facebook
-                </a>
-                <a
-                  href={INSTAGRAM_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white/85"
-                >
-                  <Instagram className="h-4 w-4" />
-                  Instagram
-                </a>
               </div>
               <Button asChild className="mt-6 rounded-full bg-white px-8 py-6 text-base font-medium text-morocco-950 hover:bg-morocco-50 hover:scale-105 transition-transform">
                 <a

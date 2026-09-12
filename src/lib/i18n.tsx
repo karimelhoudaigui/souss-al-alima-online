@@ -58,7 +58,7 @@ export const translations = {
     cursus: {
       badge: "Programmes",
       title: "Des cursus clairs, vivants et guidés.",
-      body: "L'élève choisit son parcours, comprend immédiatement le niveau attendu, l'objectif visé et l'encadrement proposé, puis peut écrire directement à l'institut sur WhatsApp.",
+      body: "Trois parcours principaux : Coran, Tajwīd et langue arabe. Chaque cursus indique l'objectif, le niveau et l'enseignant référent avant l'inscription.",
       ticker: ["Coran", "Tajwīd", "Warsh", "Rasm wa Dabt", "Langue arabe", "Suivi individuel", "Transmission", "Zoom"],
       labels: {
         availableTitle: "Cursus disponibles",
@@ -132,14 +132,14 @@ export const translations = {
         ["Suivi", "Consolider par la murājaʿa, les objectifs courts et la régularité."],
       ],
       studentExperience: "Expérience élève",
-      studentText: "Moins de répétition visuelle, plus de clarté dans le parcours.",
+      studentText: "Un apprentissage régulier, corrigé et accompagné.",
       principle: "Principe",
       principleText: "Le savoir se reçoit, se pratique et se vérifie auprès d'un enseignant.",
     },
     riwayat: {
       badge: "Riwāyāt",
       title: "Trois lectures, une orientation claire.",
-      body: "La section distingue les traditions proposées sans les présenter comme trois blocs identiques. L'élève comprend tout de suite ce qui relève de la découverte, de la précision et de la spécialité marocaine.",
+      body: "L'institut présente les lectures avec une orientation claire : comprendre les repères essentiels, puis approfondir selon son niveau.",
       forWhom: "Pour qui ?",
       origin: "Origine",
       workedPoints: "Points travaillés",
@@ -169,7 +169,7 @@ export const translations = {
     supervision: {
       badge: "Encadrement",
       title: "Une chaîne de transmission, présentée avec clarté.",
-      body: "L'encadrement n'est plus une longue biographie difficile à parcourir : les maîtres, l'enseignant et la transmission actuelle sont structurés comme une lecture guidée.",
+      body: "L'enseignement s'appuie sur une transmission vivante : un professeur identifié, des maîtres connus et un suivi attentif de l'élève.",
       transmission: "Transmission",
       level: "Niveau",
       function: "Fonction",
@@ -258,7 +258,7 @@ export const translations = {
     cursus: {
       badge: "Programs",
       title: "Clear, living and guided courses.",
-      body: "Students choose a path, immediately understand the expected level, the goal and the supervision, then contact the institute directly on WhatsApp.",
+      body: "Three main paths: Quran, Tajwīd and Arabic. Each course shows the goal, level and reference teacher before enrollment.",
       ticker: ["Quran", "Tajwīd", "Warsh", "Rasm wa Dabt", "Arabic", "Individual follow-up", "Transmission", "Zoom"],
       labels: {
         availableTitle: "Available courses",
@@ -327,14 +327,14 @@ export const translations = {
       step: "Step",
       steps: [["Diagnostic", "Identify the real level of reading, memorization and pronunciation."], ["Correction", "Work on recitation with precise feedback, without unnecessary overload."], ["Writing", "Integrate Rasm wa Dabt to connect reading, written support and memorization."], ["Follow-up", "Consolidate through murājaʿa, short goals and regularity."]],
       studentExperience: "Student experience",
-      studentText: "Less visual repetition, more clarity in the path.",
+      studentText: "Regular learning, corrected and guided.",
       principle: "Principle",
       principleText: "Knowledge is received, practiced and verified with a teacher.",
     },
     riwayat: {
       badge: "Riwāyāt",
       title: "Three readings, one clear direction.",
-      body: "The section distinguishes the proposed traditions without presenting them as identical blocks. Students immediately understand what relates to discovery, precision and the Moroccan specialty.",
+      body: "The institute presents the readings with a clear direction: understand the essential landmarks, then deepen according to one's level.",
       forWhom: "For whom?",
       origin: "Origin",
       workedPoints: "Points covered",
@@ -349,7 +349,7 @@ export const translations = {
     supervision: {
       badge: "Supervision",
       title: "A chain of transmission, presented with clarity.",
-      body: "Supervision is no longer a long biography that is hard to scan: the masters, teacher and current transmission are structured as a guided reading.",
+      body: "Teaching is rooted in a living transmission: an identified teacher, known masters and attentive student follow-up.",
       transmission: "Transmission",
       level: "Level",
       function: "Function",
@@ -420,7 +420,7 @@ export const translations = {
     cursus: {
       badge: "Programas",
       title: "Cursos claros, vivos y guiados.",
-      body: "El alumno elige su recorrido, comprende de inmediato el nivel esperado, el objetivo y la supervisión, y puede escribir directamente al instituto por WhatsApp.",
+      body: "Tres recorridos principales: Corán, Tajwīd y lengua árabe. Cada curso indica el objetivo, el nivel y el profesor referente antes de la inscripción.",
       ticker: ["Corán", "Tajwīd", "Warsh", "Rasm wa Dabt", "Árabe", "Seguimiento individual", "Transmisión", "Zoom"],
       labels: {
         availableTitle: "Cursos disponibles",
@@ -489,14 +489,14 @@ export const translations = {
       step: "Etapa",
       steps: [["Diagnóstico", "Identificar el nivel real de lectura, memorización y pronunciación."], ["Corrección", "Trabajar la recitación con devoluciones precisas, sin carga innecesaria."], ["Escritura", "Integrar el Rasm wa Dabt para unir lectura, soporte escrito y memorización."], ["Seguimiento", "Consolidar mediante murājaʿa, objetivos breves y regularidad."]],
       studentExperience: "Experiencia del alumno",
-      studentText: "Menos repetición visual, más claridad en el recorrido.",
+      studentText: "Un aprendizaje regular, corregido y acompañado.",
       principle: "Principio",
       principleText: "El saber se recibe, se practica y se verifica con un maestro.",
     },
     riwayat: {
       badge: "Riwāyāt",
       title: "Tres lecturas, una orientación clara.",
-      body: "La sección distingue las tradiciones propuestas sin presentarlas como tres bloques idénticos. El alumno comprende enseguida qué corresponde al descubrimiento, la precisión y la especialidad marroquí.",
+      body: "El instituto presenta las lecturas con una orientación clara: comprender los referentes esenciales y profundizar según el nivel.",
       forWhom: "¿Para quién?",
       origin: "Origen",
       workedPoints: "Puntos trabajados",
@@ -511,7 +511,7 @@ export const translations = {
     supervision: {
       badge: "Supervisión",
       title: "Una cadena de transmisión, presentada con claridad.",
-      body: "La supervisión ya no es una larga biografía difícil de recorrer: los maestros, el profesor y la transmisión actual están estructurados como una lectura guiada.",
+      body: "La enseñanza se apoya en una transmisión viva: un profesor identificado, maestros conocidos y un seguimiento atento del alumno.",
       transmission: "Transmisión",
       level: "Nivel",
       function: "Función",
