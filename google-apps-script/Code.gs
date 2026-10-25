@@ -75,6 +75,7 @@ function setupStudentPortal_() {
       });
     });
     schedule.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
+    schedule.getRange(2, 2, rows.length, 1).setNumberFormat("@");
     schedule.getRange(2, 5, rows.length, 1).setNumberFormat("yyyy-mm-dd hh:mm:ss");
     schedule.setFrozenRows(1);
     schedule.autoResizeColumns(1, 5);
