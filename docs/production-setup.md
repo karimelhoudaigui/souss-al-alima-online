@@ -34,7 +34,7 @@ Pour GitHub Pages, ajouter ces **Actions variables** dans les paramètres du dé
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY` (clé publique/publishable uniquement)
 
-Le workflow vérifie leur présence, injecte ces valeurs au build et génère le fallback de navigation nécessaire pour que `/souss-al-alima-online/espace-eleves` fonctionne après actualisation. Le site public doit ensuite être activé dans **Settings → Pages → Build and deployment → GitHub Actions**.
+Le workflow injecte ces valeurs au build et génère le fallback de navigation nécessaire pour que `/souss-al-alima-online/espace-eleves` fonctionne après actualisation. En leur absence, le site public est quand même déployé, mais l’espace élèves affiche un message de configuration et reste indisponible jusqu’à ce que les deux variables soient ajoutées et le workflow relancé. Le site public doit être activé dans **Settings → Pages → Build and deployment → GitHub Actions**.
 
 ## 3. Vérifications avant d’ouvrir le service
 

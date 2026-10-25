@@ -31,14 +31,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify Supabase deployment configuration
+      - name: Check Supabase deployment configuration
         env:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
-            echo "::error::Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in repository Actions variables before deploying."
-            exit 1
+            echo "::warning::Supabase is not configured. The public site will deploy, but the student portal will remain unavailable until both Actions variables are set."
           fi
 
       - name: Build
