@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Users, MessageSquare } from "lucide-react";
-import { assetPath } from "@/lib/assets";
 
 const ArabeSection = () => {
   const coursFeatures = [
@@ -90,19 +89,14 @@ const ArabeSection = () => {
               </Card>
             </div>
             
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-                <img 
-                  src={assetPath("/lovable-uploads/396e6b69-9424-40e9-9bd9-fff22c3120f3-4k.jpeg")}
-                  alt="Cheikh Sâlih Al-Manqouch As-Soussi"
-                  className="w-full h-96 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-morocco-900/20 to-transparent"></div>
-              </div>
-              
-              {/* Élément décoratif */}
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-morocco-600 rounded-full opacity-20"></div>
-              <div className="absolute -top-4 -left-4 w-16 h-16 bg-sage-500 rounded-full opacity-20"></div>
+            <div className="flex min-h-96 flex-col justify-center border-y border-morocco-200 bg-morocco-50 p-8 text-center md:p-12">
+              <p className="font-amiri text-5xl leading-relaxed text-morocco-700" dir="rtl">
+                النحو أساس العلوم العربية
+              </p>
+              <div className="mx-auto my-7 h-px w-16 bg-morocco-300" />
+              <p className="font-display text-xl italic leading-relaxed text-sage-700">
+                « La grammaire est le fondement des sciences arabes »
+              </p>
             </div>
           </div>
         </div>

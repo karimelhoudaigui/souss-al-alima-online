@@ -22,23 +22,24 @@ export default {
 		extend: {
 			fontFamily: {
 				'amiri': ['Amiri', 'serif'],
-				'geist': ['Geist', 'sans-serif'],
+				'display': ['Lora', 'Georgia', 'serif'],
+				'geist': ['Lora', 'Georgia', 'serif'],
 				'inter': ['Inter', 'sans-serif'],
 			},
 			colors: {
-				// Traditional Moroccan colors
+				// Warm, restrained tones for the institute's traditional identity.
 				'morocco': {
-					50: '#fdf8f0',
-					100: '#fbecd7',
-					200: '#f6d4af',
-					300: '#efb57c',
-					400: '#e89047',
-					500: '#d97706',
-					600: '#c2610c',
-					700: '#a1470c',
-					800: '#843912',
-					900: '#6d2f12',
-					950: '#2b1609',
+					50: '#fbf8f2',
+					100: '#f2ece2',
+					200: '#e5d9cc',
+					300: '#d2b9a6',
+					400: '#bc9077',
+					500: '#a96e57',
+					600: '#935844',
+					700: '#784638',
+					800: '#60372f',
+					900: '#472a25',
+					950: '#2f1c1a',
 				},
 				'sage': {
 					50: '#f6f7f4',

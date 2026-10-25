@@ -24,7 +24,7 @@ export const translations = {
   fr: {
     header: {
       institute: "Institut Souss Al-'Ālima",
-      nav: ["Accueil", "Cursus", "Méthodologie", "Riwāyāt", "Encadrement", "Contact"],
+      nav: ["Accueil", "Cursus", "Méthodologie", "Riwāyāt", "Encadrement", "Contact", "Espace élèves"],
       enroll: "S'inscrire",
       enrollWhatsapp: "S'inscrire sur WhatsApp",
       openMenu: "Ouvrir le menu",
@@ -228,7 +228,7 @@ export const translations = {
   en: {
     header: {
       institute: "Souss Al-'Ālima Institute",
-      nav: ["Home", "Courses", "Methodology", "Riwāyāt", "Supervision", "Contact"],
+      nav: ["Home", "Courses", "Methodology", "Riwāyāt", "Supervision", "Contact", "Student area"],
       enroll: "Enroll",
       enrollWhatsapp: "Enroll on WhatsApp",
       openMenu: "Open menu",
@@ -390,7 +390,7 @@ export const translations = {
   es: {
     header: {
       institute: "Instituto Souss Al-'Ālima",
-      nav: ["Inicio", "Cursos", "Metodología", "Riwāyāt", "Supervisión", "Contacto"],
+      nav: ["Inicio", "Cursos", "Metodología", "Riwāyāt", "Supervisión", "Contacto", "Área de alumnos"],
       enroll: "Inscribirse",
       enrollWhatsapp: "Inscribirse por WhatsApp",
       openMenu: "Abrir menú",

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { assetPath, videoAssets } from "@/lib/assets";
 import { useLanguage } from "@/lib/i18n";
 
 const riwayat = [
@@ -26,21 +25,8 @@ const RiwayatSection = () => {
   const selectedCopy = t.riwayat.items[selectedIndex];
 
   return (
-    <section id="riwayat" className="relative overflow-hidden bg-white py-20 sm:py-28">
-      <video
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08]"
-        src={videoAssets.tradition}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster={assetPath("/lovable-uploads/f0440189-3dc2-43a1-bb41-ebd48c38f96c-4k.jpeg")}
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-white/92"></div>
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="riwayat" className="bg-[#fbf8f2] py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <p className="mb-4 text-sm font-semibold uppercase text-morocco-700">
@@ -62,10 +48,11 @@ const RiwayatSection = () => {
                 key={riwaya.name}
                 type="button"
                 onClick={() => setSelectedIndex(index)}
-                className={`min-w-[230px] rounded-lg border px-4 py-4 text-left transition-colors lg:w-full ${
+                aria-pressed={selectedIndex === index}
+                className={`min-w-[230px] border-l-2 px-4 py-4 text-left transition-colors lg:w-full ${
                   selectedIndex === index
-                    ? "border-morocco-950 bg-morocco-950 text-white"
-                    : "border-morocco-200 bg-white/75 text-morocco-950 hover:border-morocco-400"
+                    ? "border-morocco-700 bg-[#f2ece2] text-morocco-950"
+                    : "border-morocco-200 text-morocco-950 hover:border-morocco-500"
                 }`}
               >
                 <p className="font-amiri text-2xl">{riwaya.arabicName}</p>
@@ -74,7 +61,7 @@ const RiwayatSection = () => {
             ))}
           </div>
 
-          <div className="rounded-lg bg-[#f8f5ef] p-6 text-morocco-950 shadow-sm sm:p-8 lg:p-12">
+          <div className="border-y border-morocco-200 bg-[#f6f1e8] p-6 text-morocco-950 sm:p-8 lg:p-12">
             <div className="max-w-3xl">
               <p className="font-amiri text-5xl leading-none text-morocco-800 sm:text-7xl">
                 {selected.arabicName}
