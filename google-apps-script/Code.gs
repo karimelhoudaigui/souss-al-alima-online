@@ -132,16 +132,29 @@ function login(displayName, pin) {
     throw new Error("Nom ou code personnel invalide.");
   }
 
-  const student = _readAccounts_(_tab_(PORTAL_TABS.students)).find(
-    (account) => account.active && account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"),
-  );
-  if (!student || !_constantTimeEquals_(student.pinHash, _pinHash_(code))) {
-    throw new Error("Nom ou code personnel incorrect.");
-  }
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const cache = CacheService.getScriptCache();
+    const attemptKey = _attemptKey_(name);
+    const attempts = Number(cache.get(attemptKey) || 0);
+    if (attempts >= 5) throw new Error("Trop de tentatives. Réessayez dans 15 minutes.");
 
-  const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
-  const payload = `${student.id}.${student.version}.${expiresAt}`;
-  return { token: `${payload}.${_signature_(payload)}`, displayName: student.name };
+    const student = _readAccounts_(_tab_(PORTAL_TABS.students)).find(
+      (account) => account.active && account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"),
+    );
+    if (!student || !_constantTimeEquals_(student.pinHash, _pinHash_(code))) {
+      cache.put(attemptKey, String(attempts + 1), 900);
+      throw new Error("Nom ou code personnel incorrect.");
+    }
+
+    cache.remove(attemptKey);
+    const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    const payload = `${student.id}.${student.version}.${expiresAt}`;
+    return { token: `${payload}.${_signature_(payload)}`, displayName: student.name };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getPortalData(token) {
@@ -247,6 +260,10 @@ function _signature_(payload) {
   const secret = PropertiesService.getScriptProperties().getProperty("SESSION_SECRET");
   if (!secret) throw new Error("Le script doit être initialisé par l'administrateur.");
   return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(payload, secret)).replace(/=+$/, "");
+}
+
+function _attemptKey_(name) {
+  return `login:${_pinHash_(name.toLocaleLowerCase("fr"))}`;
 }
 
 function _constantTimeEquals_(left, right) {
