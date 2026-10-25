@@ -1,0 +1,274 @@
+const PORTAL_TABS = {
+  schedule: "Planning",
+  students: "Comptes",
+  settings: "Configuration",
+};
+
+const WEEKLY_ROSTER = [
+  ["Anas", "Soma", "Soukaina", "Abdelrani", "Ibrahim", "", "", "", "", "", "", ""],
+  ["Saïda", "Soma", "Ismaïl", "Anis", "", "", "", "", "", "", "", ""],
+  ["Soma", "Saïda", "Abdelrani", "Ibrahim", "Soukaina", "", "", "", "", "", "", ""],
+  ["Soma", "Saïda", "Ismaïl", "Anas", "Anis", "", "", "", "", "", "", ""],
+  ["Saïda", "Soma", "Soukaina", "Abdelrani", "Ibrahim", "", "", "", "", "", "", ""],
+];
+
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile("Portal")
+    .setTitle("Espace élèves — Institut Souss Al-'Ālima")
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("Espace élèves")
+    .addItem("Initialiser le planning", "setupStudentPortal_")
+    .addItem("Ajouter un élève", "addStudentFromMenu_")
+    .addItem("Réinitialiser un code élève", "resetStudentPinFromMenu_")
+    .addToUi();
+}
+
+function setupStudentPortal_() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) throw new Error("Ouvrez le script depuis le Google Sheet de l'institut.");
+
+  spreadsheet.setSpreadsheetTimeZone("Africa/Casablanca");
+  const properties = PropertiesService.getScriptProperties();
+  properties.setProperty("SPREADSHEET_ID", spreadsheet.getId());
+  if (!properties.getProperty("PIN_PEPPER")) properties.setProperty("PIN_PEPPER", Utilities.getUuid());
+  if (!properties.getProperty("SESSION_SECRET")) properties.setProperty("SESSION_SECRET", Utilities.getUuid());
+
+  const schedule = _ensureTab_(spreadsheet, PORTAL_TABS.schedule, [
+    "Jour (1=lundi)", "Heure Maroc", "Nom affiché", "Compte propriétaire", "Mis à jour le",
+  ]);
+  const students = _ensureTab_(spreadsheet, PORTAL_TABS.students, [
+    "Identifiant", "Nom affiché", "Empreinte du code personnel", "Actif", "Version de session",
+  ]);
+  const settings = _ensureTab_(spreadsheet, PORTAL_TABS.settings, ["Clé", "Valeur"]);
+
+  const knownAccounts = _readAccounts_(students);
+  const accountIds = new Map(knownAccounts.map((account) => [account.name.toLocaleLowerCase("fr"), account.id]));
+  const newCredentials = [];
+  const names = [...new Set(WEEKLY_ROSTER.flat().filter(Boolean))];
+
+  names.forEach((name) => {
+    if (accountIds.has(name.toLocaleLowerCase("fr"))) return;
+    const id = Utilities.getUuid();
+    const pin = Utilities.getUuid().replace(/-/g, "").slice(0, 16).toUpperCase();
+    students.appendRow([id, name, _pinHash_(pin), true, 1]);
+    accountIds.set(name.toLocaleLowerCase("fr"), id);
+    newCredentials.push(`${name} : ${pin}`);
+  });
+
+  if (schedule.getLastRow() === 1) {
+    const rows = [];
+    WEEKLY_ROSTER.forEach((day, dayIndex) => {
+      day.forEach((name, slotIndex) => {
+        const hour = 21 + Math.floor(slotIndex / 4);
+        const minute = (slotIndex % 4) * 15;
+        rows.push([
+          dayIndex + 1,
+          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+          name,
+          name ? accountIds.get(name.toLocaleLowerCase("fr")) : "",
+          name ? new Date() : "",
+        ]);
+      });
+    });
+    schedule.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
+    schedule.getRange(2, 5, rows.length, 1).setNumberFormat("yyyy-mm-dd hh:mm:ss");
+    schedule.setFrozenRows(1);
+    schedule.autoResizeColumns(1, 5);
+  }
+
+  if (settings.getLastRow() === 1) {
+    settings.appendRow(["telegram_invite_url", "https://t.me/+qlHw45Sgmaq4MjI5"]);
+  }
+
+  if (newCredentials.length) {
+    console.log("Codes personnels à transmettre à chaque élève (ils ne sont pas stockés en clair) :");
+    newCredentials.forEach((credential) => console.log(credential));
+  }
+  console.log(`Planning initialisé dans « ${spreadsheet.getName()} ». Vérifiez les jours et les inscriptions avant ouverture.`);
+}
+
+function addStudentFromMenu_() {
+  const ui = SpreadsheetApp.getUi();
+  const prompt = ui.prompt("Ajouter un élève", "Nom affiché dans le planning :", ui.ButtonSet.OK_CANCEL);
+  if (prompt.getSelectedButton() !== ui.Button.OK) return;
+
+  const name = prompt.getResponseText().trim();
+  if (name.length < 2 || name.length > 80) throw new Error("Le nom doit contenir entre 2 et 80 caractères.");
+  const students = _tab_(PORTAL_TABS.students);
+  if (_readAccounts_(students).some((account) => account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"))) {
+    throw new Error("Un compte existe déjà avec ce nom.");
+  }
+
+  const id = Utilities.getUuid();
+  const pin = Utilities.getUuid().replace(/-/g, "").slice(0, 16).toUpperCase();
+  students.appendRow([id, name, _pinHash_(pin), true, 1]);
+  ui.alert(`Compte créé pour ${name}. Code personnel à transmettre une seule fois : ${pin}`);
+}
+
+function resetStudentPinFromMenu_() {
+  const ui = SpreadsheetApp.getUi();
+  const prompt = ui.prompt("Réinitialiser un code", "Nom affiché dans le planning :", ui.ButtonSet.OK_CANCEL);
+  if (prompt.getSelectedButton() !== ui.Button.OK) return;
+  const name = prompt.getResponseText().trim();
+  const sheet = _tab_(PORTAL_TABS.students);
+  const account = _readAccounts_(sheet).find((item) => item.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"));
+  if (!account) throw new Error("Aucun compte ne correspond à ce nom.");
+
+  const pin = Utilities.getUuid().replace(/-/g, "").slice(0, 16).toUpperCase();
+  const row = _readAccounts_(sheet).findIndex((item) => item.id === account.id) + 2;
+  sheet.getRange(row, 3).setValue(_pinHash_(pin));
+  sheet.getRange(row, 5).setValue(account.version + 1);
+  ui.alert(`Nouveau code personnel pour ${account.name} : ${pin}`);
+}
+
+function login(displayName, pin) {
+  const name = String(displayName || "").trim();
+  const code = String(pin || "").trim().toUpperCase();
+  if (name.length < 2 || name.length > 80 || !/^[A-Z0-9]{16}$/.test(code)) {
+    throw new Error("Nom ou code personnel invalide.");
+  }
+
+  const student = _readAccounts_(_tab_(PORTAL_TABS.students)).find(
+    (account) => account.active && account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"),
+  );
+  if (!student || !_constantTimeEquals_(student.pinHash, _pinHash_(code))) {
+    throw new Error("Nom ou code personnel incorrect.");
+  }
+
+  const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+  const payload = `${student.id}.${student.version}.${expiresAt}`;
+  return { token: `${payload}.${_signature_(payload)}`, displayName: student.name };
+}
+
+function getPortalData(token) {
+  const student = _requireStudent_(token);
+  const schedule = _tab_(PORTAL_TABS.schedule);
+  const values = schedule.getDataRange().getValues().slice(1);
+  const settings = _tab_(PORTAL_TABS.settings).getDataRange().getValues().slice(1);
+  const configuredTelegramUrl = String(settings.find((row) => row[0] === "telegram_invite_url")?.[1] || "");
+  const telegramUrl = /^https:\/\/t\.me\/[A-Za-z0-9_+/-]+$/.test(configuredTelegramUrl) ? configuredTelegramUrl : "";
+
+  return {
+    displayName: student.name,
+    telegramUrl: String(telegramUrl),
+    slots: values.map((row) => ({
+      weekday: Number(row[0]),
+      startsAt: String(row[1]),
+      occupantName: String(row[2] || ""),
+      mine: String(row[3] || "") === student.id,
+    })),
+  };
+}
+
+function bookSlot(token, weekday, startsAt) {
+  const student = _requireStudent_(token);
+  const day = Number(weekday);
+  const time = String(startsAt);
+  if (!Number.isInteger(day) || day < 1 || day > 5 || !/^([01]\d|2[0-3]):(00|15|30|45)$/.test(time)) {
+    throw new Error("Créneau invalide.");
+  }
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = _tab_(PORTAL_TABS.schedule);
+    const rows = sheet.getDataRange().getValues();
+    const index = rows.findIndex((row, rowIndex) => rowIndex > 0 && Number(row[0]) === day && String(row[1]) === time);
+    if (index < 1) throw new Error("Ce créneau n'existe pas.");
+    if (rows[index][2]) return { booked: false };
+
+    sheet.getRange(index + 1, 3, 1, 3).setValues([[student.name, student.id, new Date()]]);
+    return { booked: true };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function cancelSlot(token, weekday, startsAt) {
+  const student = _requireStudent_(token);
+  const day = Number(weekday);
+  const time = String(startsAt);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = _tab_(PORTAL_TABS.schedule);
+    const rows = sheet.getDataRange().getValues();
+    const index = rows.findIndex((row, rowIndex) => rowIndex > 0 && Number(row[0]) === day && String(row[1]) === time);
+    if (index < 1) throw new Error("Ce créneau n'existe pas.");
+    if (String(rows[index][3] || "") !== student.id) return { cancelled: false };
+
+    sheet.getRange(index + 1, 3, 1, 3).clearContent();
+    return { cancelled: true };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function _ensureTab_(spreadsheet, name, headers) {
+  const sheet = spreadsheet.getSheetByName(name) || spreadsheet.insertSheet(name);
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
+  }
+  return sheet;
+}
+
+function _tab_(name) {
+  const id = PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
+  if (!id) throw new Error("Le planning n'est pas encore initialisé par l'administrateur.");
+  const sheet = SpreadsheetApp.openById(id).getSheetByName(name);
+  if (!sheet) throw new Error("Onglet manquant : " + name);
+  return sheet;
+}
+
+function _readAccounts_(sheet) {
+  if (sheet.getLastRow() < 2) return [];
+  return sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues().map((row) => ({
+    id: String(row[0]),
+    name: String(row[1]),
+    pinHash: String(row[2]),
+    active: row[3] === true,
+    version: Number(row[4]) || 1,
+  }));
+}
+
+function _pinHash_(pin) {
+  const pepper = PropertiesService.getScriptProperties().getProperty("PIN_PEPPER");
+  if (!pepper) throw new Error("Le script doit être initialisé par l'administrateur.");
+  return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(String(pin), pepper)).replace(/=+$/, "");
+}
+
+function _signature_(payload) {
+  const secret = PropertiesService.getScriptProperties().getProperty("SESSION_SECRET");
+  if (!secret) throw new Error("Le script doit être initialisé par l'administrateur.");
+  return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(payload, secret)).replace(/=+$/, "");
+}
+
+function _constantTimeEquals_(left, right) {
+  if (left.length !== right.length) return false;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  return difference === 0;
+}
+
+function _requireStudent_(token) {
+  const parts = String(token || "").split(".");
+  if (parts.length !== 4) throw new Error("Session expirée. Reconnectez-vous.");
+  const [id, versionText, expiresText, signature] = parts;
+  const expiresAt = Number(expiresText);
+  const version = Number(versionText);
+  const payload = `${id}.${versionText}.${expiresText}`;
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now() || !_constantTimeEquals_(signature, _signature_(payload))) {
+    throw new Error("Session expirée. Reconnectez-vous.");
+  }
+  const student = _readAccounts_(_tab_(PORTAL_TABS.students)).find(
+    (account) => account.id === id && account.active && account.version === version,
+  );
+  if (!student) throw new Error("Ce compte élève est désactivé.");
+  return student;
+}

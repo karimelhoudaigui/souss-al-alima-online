@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; color: #35261f; background: #fbf8f2; }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 24px; background: #fbf8f2; }
+      .wrap { max-width: 1120px; margin: auto; }
+      .intro { text-align: center; margin: 10px auto 28px; max-width: 680px; }
+      .eyebrow { color: #784638; font-size: 13px; letter-spacing: .12em; }
+      h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 400; margin: 12px 0; }
+      p { line-height: 1.65; }
+      .card { border-block: 1px solid #d9cabc; padding: 22px; background: #fffdf8; }
+      .login { max-width: 440px; margin: 32px auto; }
+      label { display: block; margin: 0 0 14px; font-size: 14px; }
+      input { display: block; width: 100%; margin-top: 7px; padding: 12px; border: 1px solid #d9cabc; background: white; color: #35261f; font: inherit; }
+      button, .link { min-height: 42px; border: 0; padding: 10px 16px; background: #784638; color: white; font: inherit; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+      button:disabled { opacity: .55; cursor: wait; }
+      button.secondary { border: 1px solid #d9cabc; color: #784638; background: transparent; }
+      .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid #d9cabc; padding-bottom: 16px; }
+      .muted { color: #776b62; font-size: 13px; }
+      .notice { min-height: 24px; color: #8b3028; font: 14px/1.5 Arial, sans-serif; }
+      .scroll { overflow-x: auto; margin-top: 18px; }
+      table { width: 100%; min-width: 780px; border-collapse: collapse; table-layout: fixed; font: 14px Arial, sans-serif; }
+      th, td { border: 1px solid #c8b8a9; padding: 8px; text-align: center; }
+      thead th { background: #f2ece2; color: #35261f; font-weight: 600; }
+      th.time { width: 190px; text-align: left; color: white; background: #784638; font-size: 12px; line-height: 1.65; }
+      td { height: 58px; background: #d8e8d2; }
+      td.occupied { background: white; }
+      td button { min-height: 38px; width: 100%; padding: 6px; font: 12px Arial, sans-serif; }
+      td button.own { color: #784638; background: transparent; text-decoration: underline; }
+      .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0; font: 12px Arial, sans-serif; color: #655a52; }
+      .legend span { display: inline-flex; align-items: center; gap: 7px; }
+      .swatch { width: 12px; height: 12px; background: #d8e8d2; }
+      .swatch.booked { border: 1px solid #c8b8a9; background: white; }
+      .telegram { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; border-block: 1px solid #d9cabc; padding: 16px 0; }
+      @media (max-width: 600px) { body { padding: 14px; } .card { padding: 16px; } .bar { align-items: flex-start; } }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="intro">
+        <p class="eyebrow">معهد سوس العالمة · ESPACE ÉLÈVES</p>
+        <h1>Le planning des cours</h1>
+        <p>Connectez-vous avec votre nom et votre code personnel pour réserver votre créneau hebdomadaire.</p>
+      </header>
+      <div id="app" class="card" aria-live="polite">Chargement…</div>
+    </main>
+
+    <script>
+      const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+      const app = document.getElementById("app");
+      let sessionToken = localStorage.getItem("soussStudentToken") || "";
+      let portalData = null;
+      let busy = false;
+
+      function esc(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+        })[char]);
+      }
+
+      function showLogin(message = "") {
+        sessionToken = "";
+        portalData = null;
+        localStorage.removeItem("soussStudentToken");
+        app.innerHTML = `
+          <form id="login" class="login">
+            <label>Nom affiché dans le planning
+              <input name="name" required minlength="2" maxlength="80" autocomplete="name">
+            </label>
+            <label>Code personnel
+              <input name="pin" required inputmode="text" minlength="16" maxlength="16" autocomplete="one-time-code">
+            </label>
+            <p class="notice" role="alert">${esc(message)}</p>
+            <button type="submit">Se connecter</button>
+          </form>`;
+        document.getElementById("login").addEventListener("submit", (event) => {
+          event.preventDefault();
+          const form = new FormData(event.currentTarget);
+          setBusy(true);
+          google.script.run
+            .withSuccessHandler((result) => {
+              sessionToken = result.token;
+              localStorage.setItem("soussStudentToken", sessionToken);
+              setBusy(false);
+              loadSchedule();
+            })
+            .withFailureHandler((error) => {
+              setBusy(false);
+              showLogin(error.message || "Connexion impossible.");
+            })
+            .login(form.get("name"), form.get("pin"));
+        });
+        parent.postMessage({ type: "student-portal-height", height: document.documentElement.scrollHeight }, "*");
+      }
+
+      function setBusy(value) {
+        busy = value;
+        document.querySelectorAll("button").forEach((button) => { button.disabled = value; });
+      }
+
+      function loadSchedule() {
+        if (!sessionToken) return showLogin();
+        google.script.run
+          .withSuccessHandler((data) => {
+            setBusy(false);
+            portalData = data;
+            renderSchedule();
+          })
+          .withFailureHandler((error) => {
+            setBusy(false);
+            const message = error.message || "Le planning n’a pas pu être chargé.";
+            if (message.toLowerCase().includes("session")) return showLogin("Votre session a expiré. Reconnectez-vous.");
+            setBusy(false);
+            showLogin(message);
+          })
+          .getPortalData(sessionToken);
+      }
+
+      function casablancaDateParts(date) {
+        const parts = Object.fromEntries(new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Africa/Casablanca", year: "numeric", month: "2-digit", day: "2-digit",
+        }).formatToParts(date).map(({ type, value }) => [type, value]));
+        return { year: Number(parts.year), month: Number(parts.month), day: Number(parts.day) };
+      }
+
+      function mondayOfCurrentWeek() {
+        const parts = casablancaDateParts(new Date());
+        const monday = new Date(Date.UTC(parts.year, parts.month - 1, parts.day, 12));
+        const day = (monday.getUTCDay() + 6) % 7;
+        monday.setUTCDate(monday.getUTCDate() - day);
+        return monday;
+      }
+
+      function dateForDay(weekday) {
+        const date = mondayOfCurrentWeek();
+        date.setUTCDate(date.getUTCDate() + weekday - 1);
+        return date;
+      }
+
+      function instantAtZone(date, time, sourceZone) {
+        const [hour, minute] = time.split(":").map(Number);
+        const target = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), hour, minute);
+        let instant = target;
+        const formatter = new Intl.DateTimeFormat("en-GB", {
+          timeZone: sourceZone, year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+        });
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          const parts = Object.fromEntries(formatter.formatToParts(new Date(instant)).map(({ type, value }) => [type, value]));
+          instant += target - Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour), Number(parts.minute));
+        }
+        return new Date(instant);
+      }
+
+      function clock(date, time, zone) {
+        return new Intl.DateTimeFormat("fr-FR", {
+          timeZone: zone, hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+        }).format(instantAtZone(date, time, "Africa/Casablanca"));
+      }
+
+      function timeRange(start, date, zone) {
+        const [hour, minute] = start.split(":").map(Number);
+        const totalMinutes = hour * 60 + minute + 15;
+        const end = `${String(Math.floor((totalMinutes % 1440) / 60)).padStart(2, "0")}:${String(totalMinutes % 60).padStart(2, "0")}`;
+        const endDate = new Date(date);
+        endDate.setUTCDate(endDate.getUTCDate() + Math.floor(totalMinutes / 1440));
+        return `${clock(date, start, zone)}–${clock(endDate, end, zone)}`;
+      }
+
+      function renderSchedule(message = "") {
+        if (!portalData) return;
+        const dates = DAYS.map((_, index) => dateForDay(index + 1));
+        const dateLabel = (date) => new Intl.DateTimeFormat("fr-FR", {
+          timeZone: "UTC", day: "numeric", month: "short",
+        }).format(date);
+        const times = [...new Set(portalData.slots.map((slot) => slot.startsAt))].sort();
+        const rows = times.map((time) => {
+          const date = dates[0];
+          const cells = DAYS.map((_, index) => {
+            const slot = portalData.slots.find((item) => item.weekday === index + 1 && item.startsAt === time);
+            if (!slot) return "<td></td>";
+            const occupied = Boolean(slot.occupantName);
+            const own = occupied && slot.mine;
+            const button = occupied
+              ? `<button type="button" class="${own ? "own" : "secondary"}" ${own ? `data-cancel="${slot.weekday}|${esc(time)}"` : "disabled"}>${esc(slot.occupantName)}${own ? " · Annuler" : ""}</button>`
+              : `<button type="button" data-book="${index + 1}|${esc(time)}">Réserver</button>`;
+            return `<td class="${occupied ? "occupied" : ""}">${button}</td>`;
+          }).join("");
+          return `<tr><th class="time">${timeRange(time, date, "Africa/Casablanca")} 🇲🇦<br><span class="muted">${timeRange(time, date, "Europe/Paris")} 🇫🇷</span></th>${cells}</tr>`;
+        }).join("");
+
+        app.innerHTML = `
+          <div class="bar">
+            <div><strong>${esc(portalData.displayName)}</strong><div class="muted">Horaires indiqués en heure du Maroc 🇲🇦 et de France 🇫🇷, selon la date.</div></div>
+            <button class="secondary" type="button" id="logout">Se déconnecter</button>
+          </div>
+          <p class="notice" role="status">${esc(message)}</p>
+          <div class="scroll">
+            <table>
+              <thead><tr><th class="time">Planning hebdomadaire</th>${DAYS.map((day, index) => `<th>${day}<br><span class="muted">${dateLabel(dates[index])}</span></th>`).join("")}</tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="legend"><span><i class="swatch"></i>Disponible</span><span><i class="swatch booked"></i>Réservé</span></div>
+          ${portalData.telegramUrl ? `<div class="telegram"><p>Les cours ont lieu dans le groupe Telegram. Rejoignez-le puis ouvrez le salon vidéo à l’heure du cours.</p><a class="link" href="${esc(portalData.telegramUrl)}" target="_blank" rel="noreferrer">Rejoindre le groupe Telegram</a></div>` : ""}`;
+
+        document.getElementById("logout").addEventListener("click", () => showLogin());
+        document.querySelectorAll("[data-book]").forEach((button) => button.addEventListener("click", () => {
+          const [weekday, start] = button.dataset.book.split("|");
+          if (busy) return;
+          setBusy(true);
+          google.script.run
+            .withSuccessHandler((result) => {
+              setBusy(false);
+              loadScheduleWithMessage(result.booked ? "Votre créneau est réservé chaque semaine." : "Cette place vient d’être réservée. Choisissez-en une autre.");
+            })
+            .withFailureHandler((error) => { setBusy(false); renderSchedule(error.message || "La réservation a échoué."); })
+            .bookSlot(sessionToken, weekday, start);
+        }));
+        document.querySelectorAll("[data-cancel]").forEach((button) => button.addEventListener("click", () => {
+          const [weekday, start] = button.dataset.cancel.split("|");
+          if (busy || !confirm("Annuler cette réservation hebdomadaire ?")) return;
+          setBusy(true);
+          google.script.run
+            .withSuccessHandler((result) => {
+              setBusy(false);
+              loadScheduleWithMessage(result.cancelled ? "Votre réservation a été annulée." : "Cette réservation n’est pas associée à votre compte.");
+            })
+            .withFailureHandler((error) => { setBusy(false); renderSchedule(error.message || "L’annulation a échoué."); })
+            .cancelSlot(sessionToken, weekday, start);
+        }));
+        parent.postMessage({ type: "student-portal-height", height: document.documentElement.scrollHeight }, "*");
+      }
+
+      function loadScheduleWithMessage(message) {
+        google.script.run
+          .withSuccessHandler((data) => { setBusy(false); portalData = data; renderSchedule(message); })
+          .withFailureHandler((error) => { setBusy(false); showLogin(error.message || "Le planning n’a pas pu être actualisé."); })
+          .getPortalData(sessionToken);
+      }
+
+      if (sessionToken) loadSchedule();
+      else showLogin();
+    </script>
+  </body>
+</html>
