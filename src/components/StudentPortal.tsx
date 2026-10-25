@@ -186,7 +186,9 @@ function formatTimeRange(start: string, date: Date, timeZone: string) {
   const [hour, minute] = start.split(":").map(Number);
   const endMinutes = hour * 60 + minute + 15;
   const end = `${String(Math.floor((endMinutes % 1440) / 60)).padStart(2, "0")}:${String(endMinutes % 60).padStart(2, "0")}`;
-  return `${formatTime(start, date, timeZone)}–${formatTime(end, date, timeZone)}`;
+  const endDate = new Date(date);
+  endDate.setDate(endDate.getDate() + Math.floor(endMinutes / 1440));
+  return `${formatTime(start, date, timeZone)}–${formatTime(end, endDate, timeZone)}`;
 }
 
 const StudentPortal = () => {
@@ -537,7 +539,7 @@ const StudentPortal = () => {
               {selected && (
                 <form onSubmit={reserveSlot} className="mt-4 flex flex-wrap items-center gap-3 border border-morocco-200 bg-morocco-50 p-3">
                   <p className="mr-auto text-sm text-morocco-900">
-                    {copy.selected}: {copy.days[selected.weekday - 1]} · {formatTimeRange(selected.starts_at, weekDays[selected.weekday - 1], "Africa/Casablanca")}
+                    {copy.selected}: {copy.days[selected.weekday - 1]} · {formatTimeRange(selected.starts_at, weekDays[selected.weekday - 1], "Africa/Casablanca")} 🇲🇦 · {formatTimeRange(selected.starts_at, weekDays[selected.weekday - 1], "Europe/Paris")} 🇫🇷
                   </p>
                   <button type="button" onClick={() => setSelectedSlot(null)} className="px-3 py-2 text-sm text-sage-700 hover:text-morocco-950">
                     {copy.cancel}
