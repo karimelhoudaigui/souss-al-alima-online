@@ -5,41 +5,71 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-      :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; color: #35261f; background: #fbf8f2; }
+      :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; color: #35261f; background: #eee7dc; }
       * { box-sizing: border-box; }
-      body { margin: 0; padding: 24px; background: #fbf8f2; }
+      body { margin: 0; padding: 24px; }
+      body.embedded { padding: 0; }
+      .embedded .intro { display: none; }
       .wrap { max-width: 1120px; margin: auto; }
       .intro { text-align: center; margin: 10px auto 28px; max-width: 680px; }
       .eyebrow { color: #784638; font-size: 13px; letter-spacing: .12em; }
       h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 400; margin: 12px 0; }
       p { line-height: 1.65; }
-      .card { border-block: 1px solid #d9cabc; padding: 22px; background: #fffdf8; }
-      .login { max-width: 440px; margin: 32px auto; }
+      .card { padding: 24px; background: #fbf8f2; border-block: 1px solid #d9cabc; }
+      .card.login-card { max-width: 480px; margin: auto; }
+      .login { margin: 0; }
       label { display: block; margin: 0 0 14px; font-size: 14px; }
-      input { display: block; width: 100%; margin-top: 7px; padding: 12px; border: 1px solid #d9cabc; background: white; color: #35261f; font: inherit; }
-      button, .link { min-height: 42px; border: 0; padding: 10px 16px; background: #784638; color: white; font: inherit; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
-      button:disabled { opacity: .55; cursor: wait; }
-      button.secondary { border: 1px solid #d9cabc; color: #784638; background: transparent; }
+      input { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 1px solid #bba89b; border-radius: 0; background: white; color: #35261f; font: inherit; min-height: 46px; }
+      input:focus-visible, button:focus-visible, a:focus-visible, .scroll:focus-visible { outline: 2px solid #784638; outline-offset: 3px; }
+      button, .link { min-height: 44px; border: 0; padding: 10px 16px; background: #784638; color: white; font: inherit; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+      button:hover:not(:disabled), .link:hover { background: #60382d; }
+      button:disabled { opacity: .65; cursor: progress; }
+      button.secondary { border: 1px solid #bba89b; color: #784638; background: transparent; }
+      button.secondary:hover:not(:disabled) { background: #eee7dc; }
       .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid #d9cabc; padding-bottom: 16px; }
+      .actions { display: flex; flex-wrap: wrap; gap: 8px; }
       .reservation-name { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-top: 20px; }
       .reservation-name label { flex: 1 1 220px; margin: 0; }
-      .muted { color: #776b62; font-size: 13px; }
-      .notice { min-height: 24px; color: #8b3028; font: 14px/1.5 Arial, sans-serif; }
-      .scroll { overflow-x: auto; margin-top: 18px; }
-      table { width: 100%; min-width: 780px; border-collapse: collapse; table-layout: fixed; font: 14px Arial, sans-serif; }
+      .muted { color: #655a52; font: 13px/1.6 Arial, sans-serif; }
+      .notice { min-height: 24px; margin: 14px 0; color: #655a52; font: 14px/1.6 Arial, sans-serif; overflow-wrap: anywhere; }
+      .notice.error { color: #8b3028; }
+      [aria-busy="true"] .notice::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 8px; border: 2px solid #d9cabc; border-top-color: #784638; border-radius: 50%; animation: spin .8s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { [aria-busy="true"] .notice::before { animation: none; } }
+      .day-tabs { display: none; }
+      .scroll { overflow-x: auto; margin-top: 16px; }
+      table { width: 100%; min-width: 740px; border-collapse: collapse; table-layout: fixed; font: 14px Arial, sans-serif; }
+      caption { text-align: left; margin-bottom: 12px; font-size: 16px; font-weight: 600; }
       th, td { border: 1px solid #c8b8a9; padding: 8px; text-align: center; }
       thead th { background: #f2ece2; color: #35261f; font-weight: 600; }
-      th.time { width: 190px; text-align: left; color: white; background: #784638; font-size: 12px; line-height: 1.65; }
-      td { height: 58px; background: #d8e8d2; }
-      td.occupied { background: white; }
-      td button { min-height: 38px; width: 100%; padding: 6px; font: 12px Arial, sans-serif; }
-      td button.own { color: #784638; background: transparent; text-decoration: underline; }
+      th.time { width: 180px; text-align: left; color: white; background: #784638; font-size: 12px; line-height: 1.7; }
+      th.time .muted { color: #f3e5db; font-size: 12px; }
+      td { height: 64px; background: #e1ebdc; overflow-wrap: anywhere; }
+      td.occupied { background: #fffdf8; }
+      .occupant { display: block; color: #35261f; cursor: default; line-height: 1.5; }
+      td button { min-height: 44px; width: 100%; padding: 8px 6px; font: 13px Arial, sans-serif; }
+      td button.cancel { margin-top: 4px; color: #784638; background: transparent; text-decoration: underline; }
+      td button.cancel:hover:not(:disabled) { background: #eee7dc; }
       .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0; font: 12px Arial, sans-serif; color: #655a52; }
       .legend span { display: inline-flex; align-items: center; gap: 7px; }
-      .swatch { width: 12px; height: 12px; background: #d8e8d2; }
-      .swatch.booked { border: 1px solid #c8b8a9; background: white; }
-      .telegram { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; border-block: 1px solid #d9cabc; padding: 16px 0; }
-      @media (max-width: 600px) { body { padding: 14px; } .card { padding: 16px; } .bar { align-items: flex-start; } }
+      .swatch { width: 12px; height: 12px; background: #e1ebdc; border: 1px solid #c8b8a9; }
+      .swatch.booked { background: #fffdf8; }
+      .telegram { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; border-top: 1px solid #d9cabc; padding-top: 16px; }
+      .telegram p { flex: 1 1 360px; margin: 0; }
+      @media (max-width: 640px) {
+        body { padding: 14px; }
+        body.embedded { padding: 0; }
+        .card { padding: 16px; }
+        .bar { align-items: flex-start; }
+        .reservation-name button { flex-grow: 1; }
+        .day-tabs { display: flex; overflow-x: auto; gap: 6px; padding: 4px 2px; margin-top: 16px; }
+        .day-tabs button { min-width: 0; padding: 10px 6px; flex: 1 1 0; font: 13px Arial, sans-serif; background: #f2ece2; color: #784638; }
+        .day-tabs button[aria-selected="true"] { background: #784638; color: white; }
+        table { min-width: 0; }
+        th.time { width: 46%; max-width: 170px; }
+        [data-day][data-active="false"] { display: none; }
+        .telegram .link { width: 100%; }
+      }
     </style>
   </head>
   <body>
@@ -49,16 +79,30 @@
         <h1>Le planning des cours</h1>
         <p>Entrez le mot de passe de l’espace élèves pour consulter le planning et rejoindre le groupe de cours.</p>
       </header>
-      <div id="app" class="card" aria-live="polite">Chargement…</div>
+      <div id="app" class="card login-card"></div>
     </main>
-
     <script>
+      const EMBED_CONFIG = <?!= JSON.stringify(embed) ?>;
       const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
       const app = document.getElementById("app");
-      let sessionToken = "";
+      let sessionToken = stored("token");
+      let bookingName = stored("name");
       let portalData = null;
       let busy = false;
-      let bookingName = "";
+      let needsRefresh = false;
+      let activeDay = 1;
+      let requestId = 0;
+      let requestTimer;
+      if (EMBED_CONFIG) document.body.classList.add("embedded");
+
+      function stored(key, value) {
+        try {
+          if (value === undefined) return sessionStorage.getItem(`souss-portal-${key}`) || "";
+          if (value) sessionStorage.setItem(`souss-portal-${key}`, value);
+          else sessionStorage.removeItem(`souss-portal-${key}`);
+        } catch (_) { /* Access also works when third-party storage is blocked. */ }
+        return "";
+      }
 
       function esc(value) {
         return String(value).replace(/[&<>"']/g, (char) => ({
@@ -66,58 +110,98 @@
         })[char]);
       }
 
+      function sendHeight() {
+        if (!EMBED_CONFIG) return;
+        const wrap = document.querySelector(".wrap");
+        const height = Math.ceil(wrap.getBoundingClientRect().height + 4);
+        window.top.postMessage({ type: "student-portal-height", channel: EMBED_CONFIG.channel, height }, EMBED_CONFIG.origin);
+      }
+
+      new ResizeObserver(sendHeight).observe(document.querySelector(".wrap"));
+      window.addEventListener("load", sendHeight);
+      window.addEventListener("resize", sendHeight);
+
+      function notice(message, error = false) {
+        const element = app.querySelector(".notice");
+        if (element) { element.textContent = message; element.classList.toggle("error", error); }
+        sendHeight();
+      }
+
+      function setBusy(value) {
+        busy = value;
+        app.setAttribute("aria-busy", String(value));
+        app.querySelectorAll("button:not([data-local])").forEach((button) => {
+          button.disabled = value || (needsRefresh && (button.hasAttribute("data-book") || button.hasAttribute("data-cancel")));
+        });
+        app.querySelectorAll("input").forEach((input) => { input.readOnly = value; });
+      }
+
+      function rpc(method, args, message, success, mutation = false) {
+        if (busy) return;
+        const current = ++requestId;
+        setBusy(true);
+        notice(message);
+        const failed = (error) => {
+          const message = error.message || "Connexion interrompue. Réessayez.";
+          if (message.toLowerCase().includes("session")) return showLogin("Votre session a expiré. Entrez à nouveau le mot de passe.");
+          if (portalData) renderSchedule(message, true);
+          else showLogin(message);
+        };
+        requestTimer = setTimeout(() => {
+          if (current !== requestId) return;
+          requestId += 1;
+          needsRefresh = mutation;
+          setBusy(false);
+          failed({ message: mutation ? "La réponse tarde. Actualisez le planning pour vérifier votre réservation avant de réessayer." : "Le serveur met du temps à répondre. Réessayez dans un instant." });
+        }, 30000);
+        const finish = (callback) => (result) => {
+          if (current !== requestId) return;
+          clearTimeout(requestTimer);
+          setBusy(false);
+          callback(result);
+        };
+        try {
+          google.script.run.withSuccessHandler(finish(success)).withFailureHandler(finish(failed))[method](...args);
+        } catch (error) { finish(failed)(error); }
+      }
+
       function showLogin(message = "") {
+        requestId += 1;
+        clearTimeout(requestTimer);
         sessionToken = "";
+        stored("token", "");
         portalData = null;
-        bookingName = "";
+        needsRefresh = false;
+        app.classList.add("login-card");
         app.innerHTML = `
           <form id="login" class="login">
             <label>Mot de passe
               <input name="password" type="password" required autocomplete="current-password">
             </label>
-            <p class="notice" role="alert">${esc(message)}</p>
+            <p class="notice ${message ? "error" : ""}" role="alert">${esc(message)}</p>
             <button type="submit">Se connecter</button>
           </form>`;
+        setBusy(false);
         document.getElementById("login").addEventListener("submit", (event) => {
           event.preventDefault();
-          const form = new FormData(event.currentTarget);
-          setBusy(true);
-          google.script.run
-            .withSuccessHandler((result) => {
-              sessionToken = result.token;
-              setBusy(false);
-              loadSchedule();
-            })
-            .withFailureHandler((error) => {
-              setBusy(false);
-              showLogin(error.message || "Connexion impossible.");
-            })
-            .login(form.get("password"));
+          const password = event.currentTarget.elements.password.value;
+          rpc("login", [password], "Connexion et ouverture du planning…", (result) => {
+            sessionToken = result.token;
+            stored("token", sessionToken);
+            portalData = result.data;
+            renderSchedule();
+          });
         });
-        parent.postMessage({ type: "student-portal-height", height: document.documentElement.scrollHeight }, "*");
-      }
-
-      function setBusy(value) {
-        busy = value;
-        document.querySelectorAll("button").forEach((button) => { button.disabled = value; });
+        sendHeight();
       }
 
       function loadSchedule() {
         if (!sessionToken) return showLogin();
-        google.script.run
-          .withSuccessHandler((data) => {
-            setBusy(false);
-            portalData = data;
-            renderSchedule();
-          })
-          .withFailureHandler((error) => {
-            setBusy(false);
-            const message = error.message || "Le planning n’a pas pu être chargé.";
-            if (message.toLowerCase().includes("session")) return showLogin("Votre session a expiré. Reconnectez-vous.");
-            setBusy(false);
-            showLogin(message);
-          })
-          .getPortalData(sessionToken, bookingName);
+        rpc("getPortalData", [sessionToken, bookingName], "Actualisation du planning…", (data) => {
+          needsRefresh = false;
+          portalData = data;
+          renderSchedule("Planning à jour.");
+        });
       }
 
       function casablancaDateParts(date) {
@@ -171,32 +255,28 @@
         return `${clock(date, start, zone)}–${clock(endDate, end, zone)}`;
       }
 
-      function renderSchedule(message = "") {
+      function renderSchedule(message = "", error = false) {
         if (!portalData) return;
+        app.classList.remove("login-card");
         const dates = DAYS.map((_, index) => dateForDay(index + 1));
-        const dateLabel = (date) => new Intl.DateTimeFormat("fr-FR", {
-          timeZone: "UTC", day: "numeric", month: "short",
-        }).format(date);
+        const dateLabel = (date) => new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", day: "numeric", month: "short" }).format(date);
         const times = [...new Set(portalData.slots.map((slot) => slot.startsAt))].sort();
         const rows = times.map((time) => {
-          const date = dates[0];
           const cells = DAYS.map((_, index) => {
             const slot = portalData.slots.find((item) => item.weekday === index + 1 && item.startsAt === time);
-            if (!slot) return "<td></td>";
-            const occupied = Boolean(slot.occupantName);
-            const own = occupied && slot.mine;
-            const button = occupied
-              ? `<button type="button" class="${own ? "own" : "secondary"}" ${own ? `data-cancel="${slot.weekday}|${esc(time)}"` : "disabled"}>${esc(slot.occupantName)}${own ? " · Annuler" : ""}</button>`
-              : `<button type="button" data-book="${index + 1}|${esc(time)}">Réserver</button>`;
-            return `<td class="${occupied ? "occupied" : ""}">${button}</td>`;
+            const occupied = Boolean(slot && slot.occupantName);
+            const own = occupied && bookingName && slot.occupantName.trim().toLocaleLowerCase("fr") === bookingName.toLocaleLowerCase("fr");
+            const content = !slot ? "—" : occupied
+              ? `<span class="occupant" dir="auto">${esc(slot.occupantName)}</span>${own ? `<button type="button" class="cancel" data-cancel="${slot.weekday}|${esc(time)}" aria-label="Annuler votre réservation du ${DAYS[index].toLowerCase()} à ${esc(time)}">Annuler</button>` : ""}`
+              : `<button type="button" data-book="${index + 1}|${esc(time)}" aria-label="Réserver le ${DAYS[index].toLowerCase()} à ${esc(time)}">Réserver</button>`;
+            return `<td class="${occupied ? "occupied" : ""}" data-day="${index + 1}" data-active="${activeDay === index + 1}">${content}</td>`;
           }).join("");
-          return `<tr><th class="time">${timeRange(time, date, "Africa/Casablanca")} 🇲🇦<br><span class="muted">${timeRange(time, date, "Europe/Paris")} 🇫🇷</span></th>${cells}</tr>`;
+          return `<tr><th scope="row" class="time">${timeRange(time, dates[0], "Africa/Casablanca")} 🇲🇦<br><span class="muted">${timeRange(time, dates[0], "Europe/Paris")} 🇫🇷</span></th>${cells}</tr>`;
         }).join("");
-
         app.innerHTML = `
           <div class="bar">
-            <div><strong>Espace élèves</strong><div class="muted">Horaires indiqués en heure du Maroc 🇲🇦 et de France 🇫🇷, selon la date.</div></div>
-            <button class="secondary" type="button" id="logout">Se déconnecter</button>
+            <div><strong>Espace élèves</strong><div class="muted">Heures du Maroc 🇲🇦 et de France 🇫🇷, selon la date.</div></div>
+            <div class="actions"><button class="secondary" type="button" id="refresh">Actualiser</button><button class="secondary" type="button" id="logout" data-local>Se déconnecter</button></div>
           </div>
           <form id="reservation-name" class="reservation-name">
             <label>Votre nom pour vos réservations
@@ -204,70 +284,70 @@
             </label>
             <button class="secondary" type="submit">Valider mon nom</button>
           </form>
-          <p class="notice" role="status">${esc(message)}</p>
-          <div class="scroll">
-            <table>
-              <thead><tr><th class="time">Planning hebdomadaire</th>${DAYS.map((day, index) => `<th>${day}<br><span class="muted">${dateLabel(dates[index])}</span></th>`).join("")}</tr></thead>
+          <p class="notice ${error ? "error" : ""}" role="status" aria-live="polite">${esc(message)}</p>
+          <div class="day-tabs" role="tablist" aria-label="Jour du planning">${DAYS.map((day, index) => `<button type="button" role="tab" aria-label="${day}" id="day-${index + 1}" aria-selected="${activeDay === index + 1}" aria-controls="schedule" data-select-day="${index + 1}" data-local>${day.slice(0, 3)}.</button>`).join("")}</div>
+          <div class="scroll" tabindex="0" role="region" aria-label="Planning des cours">
+            <table id="schedule"><caption>Planning hebdomadaire</caption>
+              <thead><tr><th class="time" scope="col">Créneaux de 15 minutes</th>${DAYS.map((day, index) => `<th scope="col" data-day="${index + 1}" data-active="${activeDay === index + 1}">${day}<br><span class="muted">${dateLabel(dates[index])}</span></th>`).join("")}</tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
           <div class="legend"><span><i class="swatch"></i>Disponible</span><span><i class="swatch booked"></i>Réservé</span></div>
-          ${portalData.telegramUrl ? `<div class="telegram"><p>Les cours ont lieu dans le groupe Telegram. Rejoignez-le puis ouvrez le salon vidéo à l’heure du cours.</p><a class="link" href="${esc(portalData.telegramUrl)}" target="_blank" rel="noreferrer">Rejoindre le groupe Telegram</a></div>` : ""}`;
-
-        document.getElementById("logout").addEventListener("click", () => showLogin());
+          ${portalData.telegramUrl ? `<div class="telegram"><p>Rejoignez le groupe Telegram, puis ouvrez le salon vidéo à l’heure du cours.</p><a class="link" href="${esc(portalData.telegramUrl)}" target="_blank" rel="noreferrer">Rejoindre le groupe Telegram</a></div>` : ""}`;
+        setBusy(false);
+        document.getElementById("logout").addEventListener("click", () => {
+          bookingName = "";
+          stored("name", "");
+          showLogin();
+        });
+        document.getElementById("refresh").addEventListener("click", loadSchedule);
         document.getElementById("reservation-name").addEventListener("submit", (event) => {
           event.preventDefault();
           const name = event.currentTarget.elements.name.value.trim();
           if (!validBookingName(name)) return;
           bookingName = name;
-          setBusy(true);
-          loadSchedule();
+          stored("name", name);
+          renderSchedule(`Réservations affichées pour ${name}.`);
         });
-        document.querySelectorAll("[data-book]").forEach((button) => button.addEventListener("click", () => {
-          const [weekday, start] = button.dataset.book.split("|");
-          if (busy) return;
+        app.querySelectorAll("[data-select-day]").forEach((button) => button.addEventListener("click", () => {
+          activeDay = Number(button.dataset.selectDay);
+          app.querySelectorAll("[data-day]").forEach((cell) => { cell.dataset.active = String(Number(cell.dataset.day) === activeDay); });
+          app.querySelectorAll("[data-select-day]").forEach((tab) => { tab.setAttribute("aria-selected", String(Number(tab.dataset.selectDay) === activeDay)); });
+          sendHeight();
+        }));
+        app.querySelectorAll("[data-book]").forEach((button) => button.addEventListener("click", () => {
           const name = document.getElementById("reservation-name").elements.name.value.trim();
           if (!validBookingName(name)) return;
           bookingName = name;
-          setBusy(true);
-          google.script.run
-            .withSuccessHandler((result) => {
-              setBusy(false);
-              loadScheduleWithMessage(result.booked ? "Votre créneau est réservé chaque semaine." : "Cette place vient d’être réservée. Choisissez-en une autre.");
-            })
-            .withFailureHandler((error) => { setBusy(false); renderSchedule(error.message || "La réservation a échoué."); })
-            .bookSlot(sessionToken, weekday, start, bookingName);
+          stored("name", name);
+          const [weekday, start] = button.dataset.book.split("|");
+          rpc("bookSlot", [sessionToken, weekday, start, bookingName], "Réservation du créneau…", (result) => {
+            portalData = result.data;
+            renderSchedule(result.booked ? "Votre créneau est réservé chaque semaine." : "Cette place vient d’être réservée. Choisissez un autre créneau.");
+          }, true);
         }));
-        document.querySelectorAll("[data-cancel]").forEach((button) => button.addEventListener("click", () => {
-          const [weekday, start] = button.dataset.cancel.split("|");
+        app.querySelectorAll("[data-cancel]").forEach((button) => button.addEventListener("click", () => {
           if (busy || !confirm("Annuler cette réservation hebdomadaire ?")) return;
-          setBusy(true);
-          google.script.run
-            .withSuccessHandler((result) => {
-              setBusy(false);
-              loadScheduleWithMessage(result.cancelled ? "Votre réservation a été annulée." : "Cette réservation ne correspond pas au nom indiqué.");
-            })
-            .withFailureHandler((error) => { setBusy(false); renderSchedule(error.message || "L’annulation a échoué."); })
-            .cancelSlot(sessionToken, weekday, start, bookingName);
+          const [weekday, start] = button.dataset.cancel.split("|");
+          rpc("cancelSlot", [sessionToken, weekday, start, bookingName], "Annulation de la réservation…", (result) => {
+            portalData = result.data;
+            renderSchedule(result.cancelled ? "Votre réservation a été annulée." : "Cette réservation ne correspond pas au nom indiqué.");
+          }, true);
         }));
-        parent.postMessage({ type: "student-portal-height", height: document.documentElement.scrollHeight }, "*");
-      }
-
-      function loadScheduleWithMessage(message) {
-        google.script.run
-          .withSuccessHandler((data) => { setBusy(false); portalData = data; renderSchedule(message); })
-          .withFailureHandler((error) => { setBusy(false); showLogin(error.message || "Le planning n’a pas pu être actualisé."); })
-          .getPortalData(sessionToken, bookingName);
+        sendHeight();
       }
 
       function validBookingName(name) {
         if (name.length >= 2 && name.length <= 80) return true;
-        app.querySelector(".notice").textContent = "Indiquez votre nom pour réserver un créneau.";
+        notice("Indiquez votre nom pour réserver un créneau.", true);
         document.getElementById("reservation-name").elements.name.focus();
         return false;
       }
 
-      showLogin();
+      if (sessionToken) {
+        app.innerHTML = '<p class="notice" role="status">Ouverture du planning…</p>';
+        loadSchedule();
+      } else showLogin();
     </script>
   </body>
 </html>

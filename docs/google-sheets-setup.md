@@ -24,10 +24,19 @@ Les cinq colonnes du planning importé correspondent, de gauche à droite, au lu
 
 ## Publier une mise à jour
 
-1. Vérifiez le backend avec `npm run test:portal` à la racine, puis compilez le site avec `npm run build`.
+1. Vérifiez le backend avec `npm run test:portal`, puis le parcours sur ordinateur et téléphone avec `npm run test:e2e` (Google Chrome installé). Les tests de navigateur utilisent un planning isolé et ne modifient pas le tableur de production. Compilez ensuite le site avec `npm run build`.
 2. Depuis `google-apps-script/`, exécutez `clasp push`, puis `clasp deploy --deploymentId <identifiant-existant> -d "Portail élèves"` pour conserver l’URL déjà reliée au site.
 3. La variable GitHub Actions **`VITE_STUDENT_PORTAL_URL`** doit contenir cette URL Apps Script terminée par `/exec`.
 4. Poussez les changements sur `main` ou lancez le workflow **Deploy to GitHub Pages**.
 5. Vérifiez l’espace élèves publié : un seul champ mot de passe, refus d’un mauvais mot de passe, ouverture avec `souss`, affichage du planning et de Telegram. Le nom doit être demandé uniquement pour gérer les réservations.
 
 L’application Web s’exécute en tant que propriétaire et reste accessible sans compte Google. Le tableur et les outils d’administration restent privés ou protégés par leur code administrateur distinct.
+
+## Attente et affichage
+
+- La connexion renvoie directement le planning. Réserver ou annuler renvoie également l’état mis à jour dans la même réponse.
+- Le nom est validé localement, sans attendre un appel Google. Les noms des autres élèves sont du texte et ne déclenchent aucune action au survol.
+- Le cadre intégré adapte sa hauteur au contenu, y compris avant connexion. Un indicateur de chargement et un lien d’ouverture directe permettent de réessayer si Google tarde à charger.
+- Sur téléphone, les boutons de jour affichent une seule colonne à la fois, sans défilement horizontal du planning.
+- Une attente dépassant 30 secondes affiche une erreur récupérable. Après une réservation dont la réponse a expiré, le planning doit être actualisé avant une nouvelle modification, pour éviter de répéter une opération dont le résultat est inconnu.
+- La session signée et le nom sont conservés pour l’onglet lorsque le navigateur autorise le stockage. La déconnexion les efface. Les réponses arrivant après la déconnexion sont ignorées.

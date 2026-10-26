@@ -6,6 +6,7 @@ const PORTAL_TABS = {
 
 const SPREADSHEET_ID = "17mBXAT26SbHiQScWGOdtBxSzcn7r4BCHdECCQs-4Fzg";
 const PORTAL_PASSWORD = "souss";
+let portalSpreadsheet;
 
 const WEEKLY_ROSTER = [
   ["Anas", "Soma", "Soukaina", "Abdelrani", "Ibrahim", "", "", "", "", "", "", ""],
@@ -17,8 +18,15 @@ const WEEKLY_ROSTER = [
 
 function doGet(event) {
   const file = event && event.parameter && event.parameter.admin === "1" ? "Admin" : "Portal";
-  return HtmlService.createHtmlOutputFromFile(file)
+  const parameters = (event && event.parameter) || {};
+  const origin = String(parameters.parentOrigin || "");
+  const channel = String(parameters.embedId || "");
+  const allowedOrigin = /^https:\/\/karimelhoudaigui\.github\.io$/.test(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  const template = HtmlService.createTemplateFromFile(file);
+  template.embed = allowedOrigin && /^[a-zA-Z0-9-]{1,80}$/.test(channel) ? { origin, channel } : null;
+  return template.evaluate()
     .setTitle("Espace élèves — Institut Souss Al-'Ālima")
+    .addMetaTag("viewport", "width=device-width, initial-scale=1")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
@@ -134,14 +142,16 @@ function login(password) {
 
   const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
   const payload = `shared.1.${expiresAt}`;
-  return { token: `${payload}.${_signature_(payload)}` };
+  return { token: `${payload}.${_signature_(payload)}`, data: _portalData_("") };
 }
 
 function getPortalData(token, displayName) {
   _requirePortalSession_(token);
-  const name = _reservationName_(displayName, false);
-  const schedule = _tab_(PORTAL_TABS.schedule);
-  const values = schedule.getDataRange().getValues().slice(1);
+  return _portalData_(_reservationName_(displayName, false));
+}
+
+function _portalData_(name, scheduleValues) {
+  const values = scheduleValues || _tab_(PORTAL_TABS.schedule).getDataRange().getValues().slice(1);
   const settings = _tab_(PORTAL_TABS.settings).getDataRange().getValues().slice(1);
   const configuredTelegramUrl = String(settings.find((row) => row[0] === "telegram_invite_url")?.[1] || "");
   const telegramUrl = /^https:\/\/t\.me\/[A-Za-z0-9_+/-]+$/.test(configuredTelegramUrl) ? configuredTelegramUrl : "";
@@ -174,11 +184,13 @@ function bookSlot(token, weekday, startsAt, displayName) {
     const rows = sheet.getDataRange().getValues();
     const index = rows.findIndex((row, rowIndex) => rowIndex > 0 && Number(row[0]) === day && String(row[1]) === time);
     if (index < 1) throw new Error("Ce créneau n'existe pas.");
-    if (rows[index][2]) return { booked: false };
+    if (rows[index][2]) return { booked: false, data: _portalData_(name, rows.slice(1)) };
 
     const owner = `shared:${_pinHash_(name.toLocaleLowerCase("fr"))}`;
-    sheet.getRange(index + 1, 3, 1, 3).setValues([[name, owner, new Date()]]);
-    return { booked: true };
+    const booking = [name, owner, new Date()];
+    sheet.getRange(index + 1, 3, 1, 3).setValues([booking]);
+    rows[index].splice(2, 3, ...booking);
+    return { booked: true, data: _portalData_(name, rows.slice(1)) };
   } finally {
     lock.releaseLock();
   }
@@ -189,6 +201,9 @@ function cancelSlot(token, weekday, startsAt, displayName) {
   const name = _reservationName_(displayName, true);
   const day = Number(weekday);
   const time = String(startsAt);
+  if (!Number.isInteger(day) || day < 1 || day > 5 || !/^([01]\d|2[0-3]):(00|15|30|45)$/.test(time)) {
+    throw new Error("Créneau invalide.");
+  }
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
@@ -197,11 +212,12 @@ function cancelSlot(token, weekday, startsAt, displayName) {
     const index = rows.findIndex((row, rowIndex) => rowIndex > 0 && Number(row[0]) === day && String(row[1]) === time);
     if (index < 1) throw new Error("Ce créneau n'existe pas.");
     if (String(rows[index][2] || "").trim().toLocaleLowerCase("fr") !== name.toLocaleLowerCase("fr")) {
-      return { cancelled: false };
+      return { cancelled: false, data: _portalData_(name, rows.slice(1)) };
     }
 
     sheet.getRange(index + 1, 3, 1, 3).clearContent();
-    return { cancelled: true };
+    rows[index].splice(2, 3, "", "", "");
+    return { cancelled: true, data: _portalData_(name, rows.slice(1)) };
   } finally {
     lock.releaseLock();
   }
@@ -220,7 +236,8 @@ function _ensureTab_(spreadsheet, name, headers) {
 function _tab_(name) {
   const id = PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
   if (!id) throw new Error("Le planning n'est pas encore initialisé par l'administrateur.");
-  const sheet = SpreadsheetApp.openById(id).getSheetByName(name);
+  if (!portalSpreadsheet) portalSpreadsheet = SpreadsheetApp.openById(id);
+  const sheet = portalSpreadsheet.getSheetByName(name);
   if (!sheet) throw new Error("Onglet manquant : " + name);
   return sheet;
 }

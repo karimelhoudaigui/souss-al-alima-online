@@ -1,60 +1,7 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
-import { readFileSync } from "node:fs";
 import test from "node:test";
-import vm from "node:vm";
-
-const source = readFileSync(new URL("../google-apps-script/Code.gs", import.meta.url), "utf8");
-
-function portal() {
-  const rows = [
-    ["Jour", "Heure", "Nom", "Propriétaire", "Modifié"],
-    [1, "21:00", "Anas", "legacy-account-id", "existing-date"],
-    [1, "21:15", "", "", ""],
-  ];
-  const properties = new Map([
-    ["SPREADSHEET_ID", "test-sheet"],
-    ["PIN_PEPPER", "test-pepper"],
-    ["SESSION_SECRET", "test-session-secret"],
-  ]);
-  const schedule = {
-    getDataRange: () => ({ getValues: () => rows.map((row) => [...row]) }),
-    getRange(row, column, height, width) {
-      return {
-        setValues(values) {
-          for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) rows[row - 1 + y][column - 1 + x] = values[y][x];
-          }
-        },
-        clearContent() {
-          for (let x = 0; x < width; x++) rows[row - 1][column - 1 + x] = "";
-        },
-      };
-    },
-  };
-  const settings = {
-    getDataRange: () => ({ getValues: () => [["Clé", "Valeur"], ["telegram_invite_url", "https://t.me/test_group"]] }),
-  };
-  const context = vm.createContext({
-    PropertiesService: { getScriptProperties: () => ({ getProperty: (key) => properties.get(key) }) },
-    Utilities: {
-      computeHmacSha256Signature: (value, secret) => createHmac("sha256", secret).update(value).digest(),
-      base64EncodeWebSafe: (value) => Buffer.from(value).toString("base64url"),
-    },
-    SpreadsheetApp: {
-      openById: () => ({
-        getSheetByName(name) {
-          if (name === "Planning") return schedule;
-          if (name === "Configuration") return settings;
-          throw new Error("Access must not depend on individual accounts.");
-        },
-      }),
-    },
-    LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
-  });
-  vm.runInContext(source, context);
-  return { api: context, rows };
-}
+import { portal } from "./helpers/portal-server.mjs";
 
 test("the shared password opens the schedule without a name or individual account", () => {
   const { api } = portal();
@@ -64,6 +11,28 @@ test("the shared password opens the schedule without a name or individual accoun
   assert.equal(data.slots.length, 2);
   assert.equal(data.telegramUrl, "https://t.me/test_group");
   assert.equal(data.slots[0].mine, false);
+});
+
+test("login, booking, and cancellation return the updated schedule without a second request", () => {
+  const { api } = portal();
+  const result = api.login("souss");
+  assert.equal(result.data.slots.length, 2);
+  const booked = api.bookSlot(result.token, 1, "21:15", "Test");
+  assert.equal(booked.data.slots[1].occupantName, "Test");
+  assert.equal(booked.data.slots[1].mine, true);
+  const cancelled = api.cancelSlot(result.token, 1, "21:15", "Test");
+  assert.equal(cancelled.data.slots[1].occupantName, "");
+});
+
+test("invalid times and days cannot change any reservation", () => {
+  const { api, rows } = portal();
+  const { token } = api.login("souss");
+  const before = JSON.stringify(rows);
+  for (const [day, time] of [[0, "21:00"], [6, "21:00"], [1, "21:07"], [1, "invalid"]]) {
+    assert.throws(() => api.bookSlot(token, day, time, "Test"), /Créneau invalide/);
+    assert.throws(() => api.cancelSlot(token, day, time, "Anas"), /Créneau invalide/);
+  }
+  assert.equal(JSON.stringify(rows), before);
 });
 
 test("an empty or incorrect password is rejected", () => {

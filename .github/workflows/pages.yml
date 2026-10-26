@@ -34,6 +34,12 @@ jobs:
       - name: Test student portal
         run: npm run test:portal
 
+      - name: Install browser for student experience tests
+        run: npx playwright install --with-deps chrome
+
+      - name: Test student experience on desktop and mobile
+        run: npm run test:e2e
+
       - name: Check student portal configuration
         env:
           VITE_STUDENT_PORTAL_URL: ${{ vars.VITE_STUDENT_PORTAL_URL }}
