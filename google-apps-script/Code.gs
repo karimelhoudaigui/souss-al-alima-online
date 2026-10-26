@@ -4,6 +4,8 @@ const PORTAL_TABS = {
   settings: "Configuration",
 };
 
+const SPREADSHEET_ID = "17mBXAT26SbHiQScWGOdtBxSzcn7r4BCHdECCQs-4Fzg";
+
 const WEEKLY_ROSTER = [
   ["Anas", "Soma", "Soukaina", "Abdelrani", "Ibrahim", "", "", "", "", "", "", ""],
   ["Saïda", "Soma", "Ismaïl", "Anis", "", "", "", "", "", "", "", ""],
@@ -12,30 +14,30 @@ const WEEKLY_ROSTER = [
   ["Saïda", "Soma", "Soukaina", "Abdelrani", "Ibrahim", "", "", "", "", "", "", ""],
 ];
 
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile("Portal")
+function doGet(event) {
+  const file = event && event.parameter && event.parameter.admin === "1" ? "Admin" : "Portal";
+  return HtmlService.createHtmlOutputFromFile(file)
     .setTitle("Espace élèves — Institut Souss Al-'Ālima")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu("Espace élèves")
-    .addItem("Initialiser le planning", "setupStudentPortal_")
-    .addItem("Ajouter un élève", "addStudentFromMenu_")
-    .addItem("Réinitialiser un code élève", "resetStudentPinFromMenu_")
-    .addToUi();
+function setupStudentPortal() {
+  setupStudentPortal_();
 }
 
 function setupStudentPortal_() {
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  if (!spreadsheet) throw new Error("Ouvrez le script depuis le Google Sheet de l'institut.");
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
 
   spreadsheet.setSpreadsheetTimeZone("Africa/Casablanca");
   const properties = PropertiesService.getScriptProperties();
   properties.setProperty("SPREADSHEET_ID", spreadsheet.getId());
   if (!properties.getProperty("PIN_PEPPER")) properties.setProperty("PIN_PEPPER", Utilities.getUuid());
   if (!properties.getProperty("SESSION_SECRET")) properties.setProperty("SESSION_SECRET", Utilities.getUuid());
+  if (!properties.getProperty("ADMIN_KEY_HASH")) {
+    const adminKey = `${Utilities.getUuid().replace(/-/g, "")}${Utilities.getUuid().replace(/-/g, "")}`;
+    properties.setProperty("ADMIN_KEY_HASH", _pinHash_(adminKey));
+    console.log(`Code administrateur à conserver en lieu sûr : ${adminKey}`);
+  }
 
   const schedule = _ensureTab_(spreadsheet, PORTAL_TABS.schedule, [
     "Jour (1=lundi)", "Heure Maroc", "Nom affiché", "Compte propriétaire", "Mis à jour le",
@@ -92,38 +94,36 @@ function setupStudentPortal_() {
   console.log(`Planning initialisé dans « ${spreadsheet.getName()} ». Vérifiez les jours et les inscriptions avant ouverture.`);
 }
 
-function addStudentFromMenu_() {
-  const ui = SpreadsheetApp.getUi();
-  const prompt = ui.prompt("Ajouter un élève", "Nom affiché dans le planning :", ui.ButtonSet.OK_CANCEL);
-  if (prompt.getSelectedButton() !== ui.Button.OK) return;
-
-  const name = prompt.getResponseText().trim();
+function adminAddStudent(displayName, adminKey) {
+  const name = String(displayName || "").trim();
+  const code = String(adminKey || "").trim();
   if (name.length < 2 || name.length > 80) throw new Error("Le nom doit contenir entre 2 et 80 caractères.");
-  const students = _tab_(PORTAL_TABS.students);
-  if (_readAccounts_(students).some((account) => account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"))) {
-    throw new Error("Un compte existe déjà avec ce nom.");
+  if (!/^[a-f0-9]{64}$/i.test(code)) throw new Error("Code administrateur incorrect.");
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const cache = CacheService.getScriptCache();
+    const attempts = Number(cache.get("admin_add_attempts") || 0);
+    if (attempts >= 10) throw new Error("Trop de tentatives. Réessayez dans 15 minutes.");
+    if (!_constantTimeEquals_(_pinHash_(code), PropertiesService.getScriptProperties().getProperty("ADMIN_KEY_HASH") || "")) {
+      cache.put("admin_add_attempts", String(attempts + 1), 900);
+      throw new Error("Code administrateur incorrect.");
+    }
+
+    const students = _tab_(PORTAL_TABS.students);
+    if (_readAccounts_(students).some((account) => account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"))) {
+      throw new Error("Un compte existe déjà avec ce nom.");
+    }
+
+    const id = Utilities.getUuid();
+    const pin = Utilities.getUuid().replace(/-/g, "").slice(0, 16).toUpperCase();
+    students.appendRow([id, name, _pinHash_(pin), true, 1]);
+    cache.remove("admin_add_attempts");
+    return { name, pin };
+  } finally {
+    lock.releaseLock();
   }
-
-  const id = Utilities.getUuid();
-  const pin = Utilities.getUuid().replace(/-/g, "").slice(0, 16).toUpperCase();
-  students.appendRow([id, name, _pinHash_(pin), true, 1]);
-  ui.alert(`Compte créé pour ${name}. Code personnel à transmettre une seule fois : ${pin}`);
-}
-
-function resetStudentPinFromMenu_() {
-  const ui = SpreadsheetApp.getUi();
-  const prompt = ui.prompt("Réinitialiser un code", "Nom affiché dans le planning :", ui.ButtonSet.OK_CANCEL);
-  if (prompt.getSelectedButton() !== ui.Button.OK) return;
-  const name = prompt.getResponseText().trim();
-  const sheet = _tab_(PORTAL_TABS.students);
-  const account = _readAccounts_(sheet).find((item) => item.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"));
-  if (!account) throw new Error("Aucun compte ne correspond à ce nom.");
-
-  const pin = Utilities.getUuid().replace(/-/g, "").slice(0, 16).toUpperCase();
-  const row = _readAccounts_(sheet).findIndex((item) => item.id === account.id) + 2;
-  sheet.getRange(row, 3).setValue(_pinHash_(pin));
-  sheet.getRange(row, 5).setValue(account.version + 1);
-  ui.alert(`Nouveau code personnel pour ${account.name} : ${pin}`);
 }
 
 function login(displayName, pin) {
