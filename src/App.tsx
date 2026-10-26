@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import StudentPage from "./pages/StudentPage";
 import NotFound from "./pages/NotFound";
 import { LanguageProvider } from "@/lib/i18n";
+import RouteScroll from "./components/RouteScroll";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <RouteScroll />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/espace-eleves" element={<StudentPage />} />
