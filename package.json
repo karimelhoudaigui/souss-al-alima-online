@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "test:portal": "node --test tests/student-portal.test.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

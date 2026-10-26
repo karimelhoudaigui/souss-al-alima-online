@@ -5,6 +5,7 @@ const PORTAL_TABS = {
 };
 
 const SPREADSHEET_ID = "17mBXAT26SbHiQScWGOdtBxSzcn7r4BCHdECCQs-4Fzg";
+const PORTAL_PASSWORD = "souss";
 
 const WEEKLY_ROSTER = [
   ["Anas", "Soma", "Soukaina", "Abdelrani", "Ibrahim", "", "", "", "", "", "", ""],
@@ -126,40 +127,19 @@ function adminAddStudent(displayName, adminKey) {
   }
 }
 
-function login(displayName, pin) {
-  const name = String(displayName || "").trim();
-  const code = String(pin || "").trim().toUpperCase();
-  if (name.length < 2 || name.length > 80 || !/^[A-Z0-9]{16}$/.test(code)) {
-    throw new Error("Nom ou code personnel invalide.");
+function login(password) {
+  if (!_constantTimeEquals_(_pinHash_(String(password || "")), _pinHash_(PORTAL_PASSWORD))) {
+    throw new Error("Mot de passe incorrect.");
   }
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
-  try {
-    const cache = CacheService.getScriptCache();
-    const attemptKey = _attemptKey_(name);
-    const attempts = Number(cache.get(attemptKey) || 0);
-    if (attempts >= 5) throw new Error("Trop de tentatives. Réessayez dans 15 minutes.");
-
-    const student = _readAccounts_(_tab_(PORTAL_TABS.students)).find(
-      (account) => account.active && account.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"),
-    );
-    if (!student || !_constantTimeEquals_(student.pinHash, _pinHash_(code))) {
-      cache.put(attemptKey, String(attempts + 1), 900);
-      throw new Error("Nom ou code personnel incorrect.");
-    }
-
-    cache.remove(attemptKey);
-    const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
-    const payload = `${student.id}.${student.version}.${expiresAt}`;
-    return { token: `${payload}.${_signature_(payload)}`, displayName: student.name };
-  } finally {
-    lock.releaseLock();
-  }
+  const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+  const payload = `shared.1.${expiresAt}`;
+  return { token: `${payload}.${_signature_(payload)}` };
 }
 
-function getPortalData(token) {
-  const student = _requireStudent_(token);
+function getPortalData(token, displayName) {
+  _requirePortalSession_(token);
+  const name = _reservationName_(displayName, false);
   const schedule = _tab_(PORTAL_TABS.schedule);
   const values = schedule.getDataRange().getValues().slice(1);
   const settings = _tab_(PORTAL_TABS.settings).getDataRange().getValues().slice(1);
@@ -167,19 +147,20 @@ function getPortalData(token) {
   const telegramUrl = /^https:\/\/t\.me\/[A-Za-z0-9_+/-]+$/.test(configuredTelegramUrl) ? configuredTelegramUrl : "";
 
   return {
-    displayName: student.name,
+    displayName: name,
     telegramUrl: String(telegramUrl),
     slots: values.map((row) => ({
       weekday: Number(row[0]),
       startsAt: String(row[1]),
       occupantName: String(row[2] || ""),
-      mine: String(row[3] || "") === student.id,
+      mine: Boolean(name) && String(row[2] || "").trim().toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"),
     })),
   };
 }
 
-function bookSlot(token, weekday, startsAt) {
-  const student = _requireStudent_(token);
+function bookSlot(token, weekday, startsAt, displayName) {
+  _requirePortalSession_(token);
+  const name = _reservationName_(displayName, true);
   const day = Number(weekday);
   const time = String(startsAt);
   if (!Number.isInteger(day) || day < 1 || day > 5 || !/^([01]\d|2[0-3]):(00|15|30|45)$/.test(time)) {
@@ -195,15 +176,17 @@ function bookSlot(token, weekday, startsAt) {
     if (index < 1) throw new Error("Ce créneau n'existe pas.");
     if (rows[index][2]) return { booked: false };
 
-    sheet.getRange(index + 1, 3, 1, 3).setValues([[student.name, student.id, new Date()]]);
+    const owner = `shared:${_pinHash_(name.toLocaleLowerCase("fr"))}`;
+    sheet.getRange(index + 1, 3, 1, 3).setValues([[name, owner, new Date()]]);
     return { booked: true };
   } finally {
     lock.releaseLock();
   }
 }
 
-function cancelSlot(token, weekday, startsAt) {
-  const student = _requireStudent_(token);
+function cancelSlot(token, weekday, startsAt, displayName) {
+  _requirePortalSession_(token);
+  const name = _reservationName_(displayName, true);
   const day = Number(weekday);
   const time = String(startsAt);
   const lock = LockService.getScriptLock();
@@ -213,7 +196,9 @@ function cancelSlot(token, weekday, startsAt) {
     const rows = sheet.getDataRange().getValues();
     const index = rows.findIndex((row, rowIndex) => rowIndex > 0 && Number(row[0]) === day && String(row[1]) === time);
     if (index < 1) throw new Error("Ce créneau n'existe pas.");
-    if (String(rows[index][3] || "") !== student.id) return { cancelled: false };
+    if (String(rows[index][2] || "").trim().toLocaleLowerCase("fr") !== name.toLocaleLowerCase("fr")) {
+      return { cancelled: false };
+    }
 
     sheet.getRange(index + 1, 3, 1, 3).clearContent();
     return { cancelled: true };
@@ -263,8 +248,12 @@ function _signature_(payload) {
   return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(payload, secret)).replace(/=+$/, "");
 }
 
-function _attemptKey_(name) {
-  return `login:${_pinHash_(name.toLocaleLowerCase("fr"))}`;
+function _reservationName_(displayName, required) {
+  const name = String(displayName || "").trim();
+  if ((!name && required) || (name && (name.length < 2 || name.length > 80))) {
+    throw new Error("Indiquez votre nom (entre 2 et 80 caractères) pour gérer vos réservations.");
+  }
+  return name;
 }
 
 function _constantTimeEquals_(left, right) {
@@ -274,19 +263,13 @@ function _constantTimeEquals_(left, right) {
   return difference === 0;
 }
 
-function _requireStudent_(token) {
+function _requirePortalSession_(token) {
   const parts = String(token || "").split(".");
   if (parts.length !== 4) throw new Error("Session expirée. Reconnectez-vous.");
   const [id, versionText, expiresText, signature] = parts;
   const expiresAt = Number(expiresText);
-  const version = Number(versionText);
   const payload = `${id}.${versionText}.${expiresText}`;
-  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now() || !_constantTimeEquals_(signature, _signature_(payload))) {
+  if (id !== "shared" || versionText !== "1" || !Number.isFinite(expiresAt) || expiresAt <= Date.now() || !_constantTimeEquals_(signature, _signature_(payload))) {
     throw new Error("Session expirée. Reconnectez-vous.");
   }
-  const student = _readAccounts_(_tab_(PORTAL_TABS.students)).find(
-    (account) => account.id === id && account.active && account.version === version,
-  );
-  if (!student) throw new Error("Ce compte élève est désactivé.");
-  return student;
 }

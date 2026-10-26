@@ -21,6 +21,8 @@
       button:disabled { opacity: .55; cursor: wait; }
       button.secondary { border: 1px solid #d9cabc; color: #784638; background: transparent; }
       .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid #d9cabc; padding-bottom: 16px; }
+      .reservation-name { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-top: 20px; }
+      .reservation-name label { flex: 1 1 220px; margin: 0; }
       .muted { color: #776b62; font-size: 13px; }
       .notice { min-height: 24px; color: #8b3028; font: 14px/1.5 Arial, sans-serif; }
       .scroll { overflow-x: auto; margin-top: 18px; }
@@ -45,7 +47,7 @@
       <header class="intro">
         <p class="eyebrow">معهد سوس العالمة · ESPACE ÉLÈVES</p>
         <h1>Le planning des cours</h1>
-        <p>Connectez-vous avec votre nom et votre code personnel pour réserver votre créneau hebdomadaire.</p>
+        <p>Entrez le mot de passe de l’espace élèves pour consulter le planning et rejoindre le groupe de cours.</p>
       </header>
       <div id="app" class="card" aria-live="polite">Chargement…</div>
     </main>
@@ -56,6 +58,7 @@
       let sessionToken = "";
       let portalData = null;
       let busy = false;
+      let bookingName = "";
 
       function esc(value) {
         return String(value).replace(/[&<>"']/g, (char) => ({
@@ -66,13 +69,11 @@
       function showLogin(message = "") {
         sessionToken = "";
         portalData = null;
+        bookingName = "";
         app.innerHTML = `
           <form id="login" class="login">
-            <label>Nom affiché dans le planning
-              <input name="name" required minlength="2" maxlength="80" autocomplete="name">
-            </label>
-            <label>Code personnel
-              <input name="pin" required inputmode="text" minlength="16" maxlength="16" autocomplete="one-time-code">
+            <label>Mot de passe
+              <input name="password" type="password" required autocomplete="current-password">
             </label>
             <p class="notice" role="alert">${esc(message)}</p>
             <button type="submit">Se connecter</button>
@@ -91,7 +92,7 @@
               setBusy(false);
               showLogin(error.message || "Connexion impossible.");
             })
-            .login(form.get("name"), form.get("pin"));
+            .login(form.get("password"));
         });
         parent.postMessage({ type: "student-portal-height", height: document.documentElement.scrollHeight }, "*");
       }
@@ -116,7 +117,7 @@
             setBusy(false);
             showLogin(message);
           })
-          .getPortalData(sessionToken);
+          .getPortalData(sessionToken, bookingName);
       }
 
       function casablancaDateParts(date) {
@@ -194,9 +195,15 @@
 
         app.innerHTML = `
           <div class="bar">
-            <div><strong>${esc(portalData.displayName)}</strong><div class="muted">Horaires indiqués en heure du Maroc 🇲🇦 et de France 🇫🇷, selon la date.</div></div>
+            <div><strong>Espace élèves</strong><div class="muted">Horaires indiqués en heure du Maroc 🇲🇦 et de France 🇫🇷, selon la date.</div></div>
             <button class="secondary" type="button" id="logout">Se déconnecter</button>
           </div>
+          <form id="reservation-name" class="reservation-name">
+            <label>Votre nom pour vos réservations
+              <input name="name" minlength="2" maxlength="80" autocomplete="name" value="${esc(bookingName)}">
+            </label>
+            <button class="secondary" type="submit">Valider mon nom</button>
+          </form>
           <p class="notice" role="status">${esc(message)}</p>
           <div class="scroll">
             <table>
@@ -208,9 +215,20 @@
           ${portalData.telegramUrl ? `<div class="telegram"><p>Les cours ont lieu dans le groupe Telegram. Rejoignez-le puis ouvrez le salon vidéo à l’heure du cours.</p><a class="link" href="${esc(portalData.telegramUrl)}" target="_blank" rel="noreferrer">Rejoindre le groupe Telegram</a></div>` : ""}`;
 
         document.getElementById("logout").addEventListener("click", () => showLogin());
+        document.getElementById("reservation-name").addEventListener("submit", (event) => {
+          event.preventDefault();
+          const name = event.currentTarget.elements.name.value.trim();
+          if (!validBookingName(name)) return;
+          bookingName = name;
+          setBusy(true);
+          loadSchedule();
+        });
         document.querySelectorAll("[data-book]").forEach((button) => button.addEventListener("click", () => {
           const [weekday, start] = button.dataset.book.split("|");
           if (busy) return;
+          const name = document.getElementById("reservation-name").elements.name.value.trim();
+          if (!validBookingName(name)) return;
+          bookingName = name;
           setBusy(true);
           google.script.run
             .withSuccessHandler((result) => {
@@ -218,7 +236,7 @@
               loadScheduleWithMessage(result.booked ? "Votre créneau est réservé chaque semaine." : "Cette place vient d’être réservée. Choisissez-en une autre.");
             })
             .withFailureHandler((error) => { setBusy(false); renderSchedule(error.message || "La réservation a échoué."); })
-            .bookSlot(sessionToken, weekday, start);
+            .bookSlot(sessionToken, weekday, start, bookingName);
         }));
         document.querySelectorAll("[data-cancel]").forEach((button) => button.addEventListener("click", () => {
           const [weekday, start] = button.dataset.cancel.split("|");
@@ -227,10 +245,10 @@
           google.script.run
             .withSuccessHandler((result) => {
               setBusy(false);
-              loadScheduleWithMessage(result.cancelled ? "Votre réservation a été annulée." : "Cette réservation n’est pas associée à votre compte.");
+              loadScheduleWithMessage(result.cancelled ? "Votre réservation a été annulée." : "Cette réservation ne correspond pas au nom indiqué.");
             })
             .withFailureHandler((error) => { setBusy(false); renderSchedule(error.message || "L’annulation a échoué."); })
-            .cancelSlot(sessionToken, weekday, start);
+            .cancelSlot(sessionToken, weekday, start, bookingName);
         }));
         parent.postMessage({ type: "student-portal-height", height: document.documentElement.scrollHeight }, "*");
       }
@@ -239,7 +257,14 @@
         google.script.run
           .withSuccessHandler((data) => { setBusy(false); portalData = data; renderSchedule(message); })
           .withFailureHandler((error) => { setBusy(false); showLogin(error.message || "Le planning n’a pas pu être actualisé."); })
-          .getPortalData(sessionToken);
+          .getPortalData(sessionToken, bookingName);
+      }
+
+      function validBookingName(name) {
+        if (name.length >= 2 && name.length <= 80) return true;
+        app.querySelector(".notice").textContent = "Indiquez votre nom pour réserver un créneau.";
+        document.getElementById("reservation-name").elements.name.focus();
+        return false;
       }
 
       showLogin();
