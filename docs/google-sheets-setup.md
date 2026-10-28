@@ -9,7 +9,8 @@ Le mot de passe est vérifié par Google Apps Script. Le site public ne lit jama
 1. Ouvrez l’espace élèves et saisissez `souss`.
 2. Le planning et le lien Telegram s’affichent immédiatement.
 3. Pour réserver, renseignez **Votre nom pour vos réservations**, puis choisissez un créneau libre. Aucun compte à créer.
-4. Pour retrouver et annuler une réservation existante, indiquez le même nom et cliquez sur **Valider mon nom**. Le nom est déclaré par l’utilisateur ; le mot de passe commun ne vérifie pas l’identité individuelle.
+4. Le bloc **Mes créneaux** regroupe toutes les réservations correspondant au nom indiqué, sur les cinq jours. Les suggestions reprennent les noms déjà présents dans le planning ; la recherche ignore la casse, les accents latins et les espaces supplémentaires.
+5. Cliquez sur **Annuler ce créneau**, puis confirmez le jour et l’horaire affichés. La réservation hebdomadaire choisie est supprimée et la place redevient immédiatement disponible ; les autres créneaux sont conservés. Le nom est déclaré par l’utilisateur ; le mot de passe commun ne vérifie pas l’identité individuelle.
 
 Les réservations existantes sont conservées. Les créneaux libres se réservent sous verrou pour empêcher une double réservation. Les horaires sont affichés pour le Maroc (`Africa/Casablanca`) et la France (`Europe/Paris`), selon la date.
 

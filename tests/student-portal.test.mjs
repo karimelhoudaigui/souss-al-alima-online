@@ -80,3 +80,24 @@ test("cancellation requires the name on the reservation", () => {
   assert.equal(api.cancelSlot(token, 1, "21:00", "ANAS").cancelled, true);
   assert.deepEqual(rows[1].slice(2), ["", "", ""]);
 });
+
+test("an existing reservation can be found and cancelled despite accents, spacing and case", () => {
+  const { api, rows } = portal();
+  rows[1][2] = "Saïda  Ben Ali";
+  const { token } = api.login("souss");
+  assert.equal(api.getPortalData(token, "  SAIDA BEN ALI  ").slots[0].mine, true);
+  assert.equal(api.cancelSlot(token, 1, "21:00", "saida ben ali").cancelled, true);
+  assert.equal(rows[1][2], "");
+});
+
+test("cancelling one of several reservations preserves every other slot", () => {
+  const { api, rows } = portal();
+  rows[2][2] = "Anas";
+  rows.push([2, "21:00", "Autre élève", "other-owner", "original-date"]);
+  const before = JSON.stringify(rows[3]);
+  const { token } = api.login("souss");
+  assert.equal(api.cancelSlot(token, 1, "21:15", "Anas").cancelled, true);
+  assert.equal(rows[1][2], "Anas");
+  assert.equal(JSON.stringify(rows[3]), before);
+  assert.equal(api.cancelSlot(token, 1, "21:15", "Anas").cancelled, false);
+});

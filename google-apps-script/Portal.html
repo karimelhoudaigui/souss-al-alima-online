@@ -30,6 +30,13 @@
       .actions { display: flex; flex-wrap: wrap; gap: 8px; }
       .reservation-name { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-top: 20px; }
       .reservation-name label { flex: 1 1 220px; margin: 0; }
+      .my-bookings { margin-top: 20px; border-bottom: 1px solid #d9cabc; padding-bottom: 20px; }
+      .my-bookings h2 { margin: 0 0 10px; font-size: 22px; font-weight: 400; }
+      .my-bookings p { margin: 8px 0; }
+      .booking-list { list-style: none; margin: 14px 0 0; padding: 0; }
+      .booking-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-top: 1px solid #d9cabc; }
+      .booking-list .cancel { background: transparent; color: #784638; border: 1px solid #bba89b; }
+      .booking-list .cancel:hover:not(:disabled) { background: #eee7dc; }
       .muted { color: #655a52; font: 13px/1.6 Arial, sans-serif; }
       .notice { min-height: 24px; margin: 14px 0; color: #655a52; font: 14px/1.6 Arial, sans-serif; overflow-wrap: anywhere; }
       .notice.error { color: #8b3028; }
@@ -108,6 +115,10 @@
         return String(value).replace(/[&<>"']/g, (char) => ({
           "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
         })[char]);
+      }
+
+      function studentNameKey(name) {
+        return String(name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
       }
 
       function sendHeight() {
@@ -261,11 +272,18 @@
         const dates = DAYS.map((_, index) => dateForDay(index + 1));
         const dateLabel = (date) => new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC", day: "numeric", month: "short" }).format(date);
         const times = [...new Set(portalData.slots.map((slot) => slot.startsAt))].sort();
+        const mySlots = bookingName ? portalData.slots.filter((slot) => slot.occupantName && studentNameKey(slot.occupantName) === studentNameKey(bookingName)).sort((a, b) => a.weekday - b.weekday || a.startsAt.localeCompare(b.startsAt)) : [];
+        const studentNames = [...new Set(portalData.slots.map((slot) => slot.occupantName).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fr"));
+        const myBookings = mySlots.map((slot) => {
+          const day = DAYS[slot.weekday - 1];
+          const date = dates[slot.weekday - 1];
+          return `<li><div><strong>${day} · ${timeRange(slot.startsAt, date, "Africa/Casablanca")} 🇲🇦</strong><div class="muted">${timeRange(slot.startsAt, date, "Europe/Paris")} 🇫🇷 · Chaque semaine</div></div><button type="button" class="cancel" data-cancel="${slot.weekday}|${esc(slot.startsAt)}" aria-label="Annuler mon créneau du ${day.toLowerCase()} à ${esc(slot.startsAt)}">Annuler ce créneau</button></li>`;
+        }).join("");
         const rows = times.map((time) => {
           const cells = DAYS.map((_, index) => {
             const slot = portalData.slots.find((item) => item.weekday === index + 1 && item.startsAt === time);
             const occupied = Boolean(slot && slot.occupantName);
-            const own = occupied && bookingName && slot.occupantName.trim().toLocaleLowerCase("fr") === bookingName.toLocaleLowerCase("fr");
+            const own = occupied && bookingName && studentNameKey(slot.occupantName) === studentNameKey(bookingName);
             const content = !slot ? "—" : occupied
               ? `<span class="occupant" dir="auto">${esc(slot.occupantName)}</span>${own ? `<button type="button" class="cancel" data-cancel="${slot.weekday}|${esc(time)}" aria-label="Annuler votre réservation du ${DAYS[index].toLowerCase()} à ${esc(time)}">Annuler</button>` : ""}`
               : `<button type="button" data-book="${index + 1}|${esc(time)}" aria-label="Réserver le ${DAYS[index].toLowerCase()} à ${esc(time)}">Réserver</button>`;
@@ -278,12 +296,18 @@
             <div><strong>Espace élèves</strong><div class="muted">Heures du Maroc 🇲🇦 et de France 🇫🇷, selon la date.</div></div>
             <div class="actions"><button class="secondary" type="button" id="refresh">Actualiser</button><button class="secondary" type="button" id="logout" data-local>Se déconnecter</button></div>
           </div>
-          <form id="reservation-name" class="reservation-name">
-            <label>Votre nom pour vos réservations
-              <input name="name" minlength="2" maxlength="80" autocomplete="name" value="${esc(bookingName)}">
-            </label>
-            <button class="secondary" type="submit">Valider mon nom</button>
-          </form>
+          <section class="my-bookings" aria-labelledby="my-bookings-heading">
+            <h2 id="my-bookings-heading">Mes créneaux</h2>
+            <p class="muted">Indiquez le nom utilisé dans le planning pour retrouver vos réservations et libérer un créneau si vous ne pouvez plus venir.</p>
+            <form id="reservation-name" class="reservation-name">
+              <label>Votre nom pour vos réservations
+                <input name="name" list="student-names" minlength="2" maxlength="80" autocomplete="name" value="${esc(bookingName)}">
+              </label>
+              <datalist id="student-names">${studentNames.map((name) => `<option value="${esc(name)}"></option>`).join("")}</datalist>
+              <button class="secondary" type="submit">Afficher mes créneaux</button>
+            </form>
+            ${bookingName ? `<p class="muted">Réservations de ${esc(bookingName)}</p>${mySlots.length ? `<ul class="booking-list">${myBookings}</ul>` : '<p class="muted">Aucun créneau réservé à ce nom. Vous pouvez en choisir un dans le planning ci-dessous.</p>'}` : '<p class="muted">Le planning reste consultable ci-dessous sans renseigner de nom.</p>'}
+          </section>
           <p class="notice ${error ? "error" : ""}" role="status" aria-live="polite">${esc(message)}</p>
           <div class="day-tabs" role="tablist" aria-label="Jour du planning">${DAYS.map((day, index) => `<button type="button" role="tab" aria-label="${day}" id="day-${index + 1}" aria-selected="${activeDay === index + 1}" aria-controls="schedule" data-select-day="${index + 1}" data-local>${day.slice(0, 3)}.</button>`).join("")}</div>
           <div class="scroll" tabindex="0" role="region" aria-label="Planning des cours">
@@ -327,11 +351,14 @@
           }, true);
         }));
         app.querySelectorAll("[data-cancel]").forEach((button) => button.addEventListener("click", () => {
-          if (busy || !confirm("Annuler cette réservation hebdomadaire ?")) return;
+          if (busy) return;
           const [weekday, start] = button.dataset.cancel.split("|");
+          const day = DAYS[Number(weekday) - 1];
+          const date = dates[Number(weekday) - 1];
+          if (!confirm(`Annuler votre créneau hebdomadaire du ${day.toLowerCase()}, ${timeRange(start, date, "Africa/Casablanca")} (heure du Maroc) ? Cette place redeviendra disponible chaque semaine.`)) return;
           rpc("cancelSlot", [sessionToken, weekday, start, bookingName], "Annulation de la réservation…", (result) => {
             portalData = result.data;
-            renderSchedule(result.cancelled ? "Votre réservation a été annulée." : "Cette réservation ne correspond pas au nom indiqué.");
+            renderSchedule(result.cancelled ? "Votre créneau a été annulé. La place est à nouveau disponible." : "Cette réservation ne correspond pas au nom indiqué.");
           }, true);
         }));
         sendHeight();

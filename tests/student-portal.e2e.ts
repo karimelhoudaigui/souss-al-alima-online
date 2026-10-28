@@ -87,9 +87,48 @@ test("other students are plain text, and setting a name is immediate", async ({ 
   await occupant.hover();
   expect(calls).toEqual(["login"]);
   await frame.getByLabel("Votre nom pour vos réservations").fill("Anas");
-  await frame.getByRole("button", { name: "Valider mon nom" }).click();
-  await expect(frame.locator("[data-cancel]")).toHaveCount(1);
+  await frame.getByRole("button", { name: "Afficher mes créneaux" }).click();
+  await expect(frame.locator(".booking-list [data-cancel]")).toHaveCount(1);
   expect(calls).toEqual(["login"]);
+});
+
+test("my slots lists existing bookings across all days and lets a student free just one", async ({ page }) => {
+  const { frame, server, calls } = await setup(page);
+  server.rows[1][2] = "Saïda";
+  server.rows[49][2] = "Saïda";
+  await signIn(frame);
+  await expect(frame.getByRole("heading", { name: "Mes créneaux", exact: true })).toBeVisible();
+  await frame.getByLabel("Votre nom pour vos réservations").fill("saida");
+  await frame.getByRole("button", { name: "Afficher mes créneaux", exact: true }).click();
+  await expect(frame.locator(".booking-list li")).toHaveCount(2);
+  await expect(frame.locator(".booking-list")).toContainText("Vendredi");
+  expect(calls).toEqual(["login"]);
+  const cancelFriday = frame.locator('.booking-list [data-cancel="5|21:00"]');
+  page.once("dialog", async (dialog) => {
+    expect(dialog.message()).toContain("vendredi");
+    expect(dialog.message()).toContain("chaque semaine");
+    await dialog.dismiss();
+  });
+  await cancelFriday.click();
+  expect(calls).not.toContain("cancelSlot");
+  page.once("dialog", (dialog) => dialog.accept());
+  await cancelFriday.click();
+  await expect(frame.locator(".booking-list li")).toHaveCount(1);
+  await expect(frame.locator(".booking-list")).toContainText("Lundi");
+  await expect(frame.locator(".notice")).toContainText("La place est à nouveau disponible");
+  expect(server.rows[49][2]).toEqual("");
+  expect(server.rows[1][2]).toEqual("Saïda");
+  expect(calls.filter((method) => method === "cancelSlot")).toHaveLength(1);
+});
+
+test("a name without reservations shows a clear empty state and no cancellation action", async ({ page }) => {
+  const { frame } = await setup(page);
+  await signIn(frame);
+  await frame.getByLabel("Votre nom pour vos réservations").fill("Nom sans réservation");
+  await frame.getByRole("button", { name: "Afficher mes créneaux", exact: true }).click();
+  await expect(frame.locator(".my-bookings")).toContainText("Aucun créneau réservé à ce nom");
+  await expect(frame.locator("[data-cancel]")).toHaveCount(0);
+  await expect(frame.locator("table")).toBeVisible();
 });
 
 test("booking, repeated clicks, cancellation and keyboard input work without extra reloads", async ({ page }) => {
@@ -105,14 +144,14 @@ test("booking, repeated clicks, cancellation and keyboard input work without ext
   await slot.dispatchEvent("click");
   await expect(frame.locator("#app")).toHaveAttribute("aria-busy", "true");
   await expect(frame.locator(".notice")).toContainText("Réservation du créneau");
-  await expect(frame.locator('[data-cancel="1|21:15"]')).toBeVisible();
+  await expect(frame.locator('table [data-cancel="1|21:15"]')).toBeVisible();
   expect(calls.filter((name) => name === "bookSlot")).toHaveLength(1);
   expect(calls).not.toContain("getPortalData");
   page.once("dialog", (dialog) => dialog.dismiss());
-  await frame.locator('[data-cancel="1|21:15"]').click();
+  await frame.locator('table [data-cancel="1|21:15"]').click();
   expect(calls).not.toContain("cancelSlot");
   page.once("dialog", (dialog) => dialog.accept());
-  await frame.locator('[data-cancel="1|21:15"]').click();
+  await frame.locator('table [data-cancel="1|21:15"]').click();
   await expect(frame.locator('[data-book="1|21:15"]')).toBeVisible();
   expect(calls.filter((name) => name === "cancelSlot")).toHaveLength(1);
   expect(calls).not.toContain("getPortalData");
@@ -147,7 +186,7 @@ test("a delayed reservation is reconciled before another booking is allowed", as
   await expect(frame.locator(".notice")).toContainText("Actualisez le planning");
   await expect(frame.locator('[data-book="1|21:15"]')).toBeDisabled();
   await frame.getByRole("button", { name: "Actualiser", exact: true }).click();
-  await expect(frame.locator('[data-cancel="1|21:15"]')).toBeVisible();
+  await expect(frame.locator('table [data-cancel="1|21:15"]')).toBeVisible();
   control.release();
   expect(calls.filter((name) => name === "bookSlot")).toHaveLength(1);
 });
@@ -156,7 +195,7 @@ test("reload restores the session and name without asking for the password again
   const { frame, calls } = await setup(page);
   await signIn(frame);
   await frame.getByLabel("Votre nom pour vos réservations").fill("Nom conservé");
-  await frame.getByRole("button", { name: "Valider mon nom" }).click();
+  await frame.getByRole("button", { name: "Afficher mes créneaux" }).click();
   await page.reload();
   await expect(frame.locator("table")).toBeVisible();
   await expect(frame.getByLabel("Votre nom pour vos réservations")).toHaveValue("Nom conservé");

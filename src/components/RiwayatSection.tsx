@@ -6,14 +6,23 @@ const riwayat = [
   {
     name: "Ḥafṣ ʿan ʿĀṣim",
     arabicName: "حفص عن عاصم",
+    reader: "ʿĀṣim al-Kūfī · عاصم الكوفي",
+    narrator: "Ḥafṣ ibn Sulaymān · حفص بن سليمان",
+    biography: "https://islamansiklopedisi.org.tr/hafs-b-suleyman",
   },
   {
     name: "Qālūn ʿan Nāfiʿ",
     arabicName: "قالون عن نافع",
+    reader: "Nāfiʿ al-Madanī · نافع المدني",
+    narrator: "Qālūn (ʿĪsā ibn Mīnā) · قالون (عيسى بن مينا)",
+    biography: "https://islamansiklopedisi.org.tr/kalun",
   },
   {
     name: "Warsh ʿan Nāfiʿ",
     arabicName: "ورش عن نافع",
+    reader: "Nāfiʿ al-Madanī · نافع المدني",
+    narrator: "Warsh (ʿUthmān ibn Saʿīd) · ورش (عثمان بن سعيد)",
+    biography: "https://islamansiklopedisi.org.tr/vers",
     highlight: true,
   },
 ];
@@ -83,6 +92,14 @@ const RiwayatSection = () => {
 
             <dl className="mt-8 grid gap-6 border-y border-morocco-200 py-6 sm:grid-cols-2">
               <div>
+                <dt className="text-xs font-semibold uppercase text-sage-500">{t.riwayat.reader}</dt>
+                <dd className="mt-2 font-semibold text-morocco-950">{selected.reader}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-semibold uppercase text-sage-500">{t.riwayat.narrator}</dt>
+                <dd className="mt-2 font-semibold text-morocco-950"><a href={selected.biography} target="_blank" rel="noreferrer" className="underline decoration-morocco-300 underline-offset-4">{selected.narrator}</a></dd>
+              </div>
+              <div>
                 <dt className="text-xs font-semibold uppercase text-sage-500">{t.riwayat.origin}</dt>
                 <dd className="mt-2 font-semibold text-morocco-950">{selectedCopy.origin}</dd>
               </div>
@@ -91,6 +108,10 @@ const RiwayatSection = () => {
                 <dd className="mt-2 text-sage-800">{selectedCopy.features.join(" · ")}</dd>
               </div>
             </dl>
+
+            <a href="https://fonts.qurancomplex.gov.sa/ten-readings/" target="_blank" rel="noreferrer" className="text-sm text-morocco-800 underline underline-offset-4">
+              {t.riwayat.references}
+            </a>
 
             <details className="group mt-6">
               <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-morocco-800">

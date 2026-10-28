@@ -163,7 +163,7 @@ function _portalData_(name, scheduleValues) {
       weekday: Number(row[0]),
       startsAt: String(row[1]),
       occupantName: String(row[2] || ""),
-      mine: Boolean(name) && String(row[2] || "").trim().toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"),
+      mine: Boolean(name) && _studentNameKey_(row[2]) === _studentNameKey_(name),
     })),
   };
 }
@@ -186,7 +186,7 @@ function bookSlot(token, weekday, startsAt, displayName) {
     if (index < 1) throw new Error("Ce créneau n'existe pas.");
     if (rows[index][2]) return { booked: false, data: _portalData_(name, rows.slice(1)) };
 
-    const owner = `shared:${_pinHash_(name.toLocaleLowerCase("fr"))}`;
+    const owner = `shared:${_pinHash_(_studentNameKey_(name))}`;
     const booking = [name, owner, new Date()];
     sheet.getRange(index + 1, 3, 1, 3).setValues([booking]);
     rows[index].splice(2, 3, ...booking);
@@ -211,7 +211,7 @@ function cancelSlot(token, weekday, startsAt, displayName) {
     const rows = sheet.getDataRange().getValues();
     const index = rows.findIndex((row, rowIndex) => rowIndex > 0 && Number(row[0]) === day && String(row[1]) === time);
     if (index < 1) throw new Error("Ce créneau n'existe pas.");
-    if (String(rows[index][2] || "").trim().toLocaleLowerCase("fr") !== name.toLocaleLowerCase("fr")) {
+    if (_studentNameKey_(rows[index][2]) !== _studentNameKey_(name)) {
       return { cancelled: false, data: _portalData_(name, rows.slice(1)) };
     }
 
@@ -271,6 +271,10 @@ function _reservationName_(displayName, required) {
     throw new Error("Indiquez votre nom (entre 2 et 80 caractères) pour gérer vos réservations.");
   }
   return name;
+}
+
+function _studentNameKey_(name) {
+  return String(name || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
 }
 
 function _constantTimeEquals_(left, right) {
