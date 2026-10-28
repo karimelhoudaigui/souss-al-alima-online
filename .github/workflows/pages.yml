@@ -22,6 +22,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read GitHub Pages address
+        id: pages
+        uses: actions/configure-pages@v5
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -50,6 +54,7 @@ jobs:
 
       - name: Build
         env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           VITE_STUDENT_PORTAL_URL: ${{ vars.VITE_STUDENT_PORTAL_URL }}
         run: npm run build
 

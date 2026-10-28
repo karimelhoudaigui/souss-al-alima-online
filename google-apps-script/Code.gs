@@ -21,7 +21,11 @@ function doGet(event) {
   const parameters = (event && event.parameter) || {};
   const origin = String(parameters.parentOrigin || "");
   const channel = String(parameters.embedId || "");
-  const allowedOrigin = /^https:\/\/karimelhoudaigui\.github\.io$/.test(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  const allowedOrigin = [
+    "https://karimelhoudaigui.github.io",
+    "https://soussalalima.fr",
+    "https://www.soussalalima.fr",
+  ].includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
   const template = HtmlService.createTemplateFromFile(file);
   template.embed = allowedOrigin && /^[a-zA-Z0-9-]{1,80}$/.test(channel) ? { origin, channel } : null;
   return template.evaluate()

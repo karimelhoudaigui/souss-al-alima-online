@@ -3,6 +3,51 @@ import { createHmac } from "node:crypto";
 import test from "node:test";
 import { portal } from "./helpers/portal-server.mjs";
 
+function renderPortalEmbed(origin, channel = "test-embed-123") {
+  const { api } = portal();
+  let embed;
+  const output = {
+    setTitle() { return this; },
+    addMetaTag() { return this; },
+    setXFrameOptionsMode() { return this; },
+  };
+  api.HtmlService = {
+    XFrameOptionsMode: { ALLOWALL: "ALLOWALL" },
+    createTemplateFromFile() {
+      return { evaluate() { embed = this.embed; return output; } };
+    },
+  };
+  api.doGet({ parameter: { parentOrigin: origin, embedId: channel } });
+  return JSON.parse(JSON.stringify(embed));
+}
+
+test("the student portal adapts its frame on the custom domain and existing site", () => {
+  for (const origin of [
+    "https://soussalalima.fr",
+    "https://www.soussalalima.fr",
+    "https://karimelhoudaigui.github.io",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+  ]) {
+    assert.deepEqual(renderPortalEmbed(origin), { origin, channel: "test-embed-123" });
+  }
+});
+
+test("the student portal rejects unrelated origins and malformed frame channels", () => {
+  for (const origin of [
+    "https://soussalalima.fr.example.com",
+    "https://www.soussalalima.fr.example.com",
+    "http://soussalalima.fr",
+    "https://soussalalima.fr/",
+    "https://another-site.fr",
+    "",
+  ]) {
+    assert.equal(renderPortalEmbed(origin), null);
+  }
+  assert.equal(renderPortalEmbed("https://soussalalima.fr", ""), null);
+  assert.equal(renderPortalEmbed("https://soussalalima.fr", "invalid channel!"), null);
+});
+
 test("the shared password opens the schedule without a name or individual account", () => {
   const { api } = portal();
   const { token } = api.login("souss");

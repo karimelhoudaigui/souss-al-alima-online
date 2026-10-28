@@ -5,7 +5,10 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === "production" ? "/souss-al-alima-online/" : "/",
+  // GitHub Pages exposes an empty base path when a custom domain is attached.
+  base: mode === "production"
+    ? `${(process.env.PAGES_BASE_PATH ?? "/souss-al-alima-online").replace(/\/+$/, "")}/`
+    : "/",
   server: {
     host: "::",
     port: 8080,
