@@ -1,9 +1,8 @@
-import { ExternalLink, Instagram, MessageCircle, Phone } from "lucide-react";
+import { ExternalLink, Instagram, MessageCircle } from "lucide-react";
 import {
   FACEBOOK_URL,
   getWhatsAppLink,
   INSTAGRAM_URL,
-  PHONE_LINK,
   WHATSAPP_DISPLAY_NUMBER,
 } from "@/lib/contact";
 import { useLanguage } from "@/lib/i18n";
@@ -36,10 +35,12 @@ const ContactSection = () => {
           </a>
 
           <a
-            href={`tel:${PHONE_LINK}`}
+            href={getWhatsAppLink(t.contact.messages.information)}
+            target="_blank"
+            rel="noreferrer"
             className="inline-flex items-center gap-2 text-sm text-morocco-800 hover:text-morocco-950"
           >
-            <Phone className="h-4 w-4" />
+            <MessageCircle className="h-4 w-4" />
             {WHATSAPP_DISPLAY_NUMBER}
           </a>
         </div>

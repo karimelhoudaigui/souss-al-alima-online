@@ -1,6 +1,6 @@
-export const WHATSAPP_DISPLAY_NUMBER = "+33 6 64 95 32 38";
-export const WHATSAPP_INTERNATIONAL_NUMBER = "33664953238";
-export const PHONE_LINK = "+33664953238";
+export const WHATSAPP_DISPLAY_NUMBER = "+212 628 824 478";
+export const WHATSAPP_INTERNATIONAL_NUMBER = "212628824478";
+export const PHONE_LINK = "+212628824478";
 export const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61556073107047";
 export const INSTAGRAM_URL = "https://www.instagram.com/souss_al.alima";
 
